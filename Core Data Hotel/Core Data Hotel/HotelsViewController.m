@@ -55,4 +55,21 @@
     return _allHotels;
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    NSLog(@"%lu", (unsigned long)[self allHotels].count);
+    return [self allHotels].count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    int index = (int)indexPath.row;
+    Hotel *hotel = [[self allHotels ] objectAtIndex:index];
+    cell.textLabel.text = hotel.name;
+    
+    return cell;
+}
+
+
+
 @end

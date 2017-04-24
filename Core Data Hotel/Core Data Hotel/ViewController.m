@@ -34,13 +34,16 @@
     
     NSArray *buttons = [NSArray arrayWithObjects:browseButton, bookButton, lookupButton, nil];
     
-    [AutoLayout leadingConstraintFrom:browseButton toView:self.view];
-    [AutoLayout trailingConstraintFrom:browseButton toView:self.view];
+    for (UIButton *button in buttons) {
+        [AutoLayout leadingConstraintFrom:button toView:self.view];
+        [AutoLayout trailingConstraintFrom:button toView:self.view];
+    }
     
-    NSLayoutConstraint *browseButtonheight = [AutoLayout equalHeightConstraintFromView:browseButton toView:self.view withMultiplier:0.33];
+    NSLayoutConstraint *browseButtonHeight = [AutoLayout equalHeightConstraintFromView:browseButton toView:self.view withMultiplier:0.33];
     
-    // TODO: offset by height of navbar
-//    browseButtonheight.constant = navBarHeight;
+//    TODO: offset by height of navbar
+//    browseButtonHeight.constant = navBarHeight;
+    
     
     [browseButton addTarget:self action:@selector(browseButtonSelected) forControlEvents:UIControlEventTouchUpInside];
 }
