@@ -1,5 +1,5 @@
 //
-//  HotelViewController.h
+//  HotelsViewController.h
 //  Core Data Hotel
 //
 //  Created by Robert Hatfield on 4/24/17.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HotelViewController : UIViewController
+@interface HotelsViewController : UIViewController
 
 @end
