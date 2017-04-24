@@ -64,13 +64,8 @@
 			isa = PBXGroup;
 			children = (
 				62C9CACD1EAE6E44008BB071 /* Models */,
-				62C9CAB21EAE6D23008BB071 /* AppDelegate.h */,
-				62C9CAB31EAE6D23008BB071 /* AppDelegate.m */,
 				62C9CACC1EAE6D83008BB071 /* Controllers */,
-				62C9CABE1EAE6D23008BB071 /* Assets.xcassets */,
-				62C9CAC01EAE6D23008BB071 /* LaunchScreen.storyboard */,
-				62C9CAC31EAE6D23008BB071 /* Info.plist */,
-				62C9CABB1EAE6D23008BB071 /* Core_Data_Hotel.xcdatamodeld */,
+				62C9CAD01EAE9592008BB071 /* Views */,
 				62C9CAAF1EAE6D23008BB071 /* Supporting Files */,
 			);
 			path = "Core Data Hotel";
@@ -79,6 +74,10 @@
 		62C9CAAF1EAE6D23008BB071 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				62C9CAB21EAE6D23008BB071 /* AppDelegate.h */,
+				62C9CAB31EAE6D23008BB071 /* AppDelegate.m */,
+				62C9CABE1EAE6D23008BB071 /* Assets.xcassets */,
+				62C9CAC31EAE6D23008BB071 /* Info.plist */,
 				62C9CAB01EAE6D23008BB071 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -99,8 +98,17 @@
 				62C9CAC91EAE6D5E008BB071 /* AutoLayout.h */,
 				62C9CACA1EAE6D5E008BB071 /* AutoLayout.m */,
 				62C9CACE1EAE94FF008BB071 /* hotels.json */,
+				62C9CABB1EAE6D23008BB071 /* Core_Data_Hotel.xcdatamodeld */,
 			);
 			name = Models;
+			sourceTree = "<group>";
+		};
+		62C9CAD01EAE9592008BB071 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				62C9CAC01EAE6D23008BB071 /* LaunchScreen.storyboard */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -9,6 +9,12 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 
+#import "Hotel+CoreDataClass.h"
+#import "Hotel+CoreDataProperties.h"
+
+#import "Room+CoreDataClass.h"
+#import "Room+CoreDataProperties.h"
+
 @interface AppDelegate ()
 
 @property(strong, nonatomic) UINavigationController *navController;
@@ -23,7 +29,71 @@
     // Override point for customization after application launch.
     
     [self setupRootViewController];
+    [self bootstrapApp];
     return YES;
+}
+
+-(void)bootstrapApp {
+    // Seed CoreData with contents of JSON file if no CoreData store is available.
+    
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Hotel"];
+    NSError *error;
+    NSInteger count = [self.persistentContainer.viewContext countForFetchRequest:request error:&error];
+    
+    if (error) {
+        NSLog(@"%@", error.localizedDescription);
+    }
+    
+    if (count == 0) {
+        NSDictionary *hotels = [[NSDictionary alloc] init];
+        
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"hotels" ofType:@"json"];
+        
+        NSData *jsonData = [NSData dataWithContentsOfFile:path];
+        
+        NSError *jsonError;
+        NSDictionary *jsonDictionary = [NSJSONSerialization
+                                        JSONObjectWithData:jsonData
+                                        options:NSJSONReadingMutableContainers
+                                        error:&jsonError];
+        
+        if (jsonError) {
+            NSLog(@"%@", error.localizedDescription);
+        }
+        
+        hotels = jsonDictionary[@"Hotels"];
+        
+        for (NSDictionary *hotel in hotels) {
+            Hotel *newHotel = [NSEntityDescription
+                               insertNewObjectForEntityForName:@"Hotel"
+                               inManagedObjectContext:self.persistentContainer.viewContext];
+            
+            newHotel.name = hotel[@"name"];
+            newHotel.location = hotel[@"location"];
+            newHotel.stars = (NSInteger)hotel[@"stars"];
+            
+            for (NSDictionary *room in hotel[@"rooms"]) {
+                Room *newRoom = [NSEntityDescription
+                                 insertNewObjectForEntityForName:@"Room"
+                                 inManagedObjectContext:self.persistentContainer.viewContext];
+                
+                newRoom.number = (NSInteger)room[@"number"];
+                newRoom.beds = (NSInteger)room[@"beds"];
+                newRoom.rate = (NSInteger)room[@"rate"];
+                
+                newRoom.hotel = newHotel;
+            }
+        }
+        
+        NSError *saveError;
+        [self.persistentContainer.viewContext save:&saveError];
+        
+        if (saveError) {
+            NSLog(@"There was an error when saving to Core Data.");
+        } else {
+            NSLog(@"Succesfully saved to Core Data.");
+        }
+    }
 }
 
 -(void)setupRootViewController {
