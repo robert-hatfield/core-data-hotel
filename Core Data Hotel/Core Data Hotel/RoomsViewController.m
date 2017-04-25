@@ -35,7 +35,10 @@
 
     self.roomTableView.dataSource = self;
     [self.roomTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"roomCell"];
-    self.roomsInHotel = [[self.hotel rooms] allObjects];
+    
+    NSSortDescriptor *numberDescriptor = [[NSSortDescriptor alloc] initWithKey:@"number" ascending:YES];
+    NSArray *descriptors = [NSArray arrayWithObject:numberDescriptor];
+    self.roomsInHotel = [[[self.hotel rooms] allObjects] sortedArrayUsingDescriptors:descriptors];
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
