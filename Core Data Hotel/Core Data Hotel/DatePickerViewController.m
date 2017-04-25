@@ -8,6 +8,7 @@
 
 #import "DatePickerViewController.h"
 #import "AvailabilityViewController.h"
+#import "AutoLayout.h"
 
 @interface DatePickerViewController ()
 
@@ -54,10 +55,14 @@
 - (void)setupDatePickers {
     self.endDate = [[UIDatePicker alloc] init];
     self.endDate.datePickerMode = UIDatePickerModeDate;
-    
-    // change this to use constraints instead of frames for lab assignment
-    self.endDate.frame = CGRectMake(0, 84.0, self.view.frame.size.width, 200.0);
+
     [self.view addSubview:self.endDate];
+
+    CGFloat topLayoutHeight = CGRectGetHeight(self.navigationController.navigationBar.frame) + 20;
+    self.endDate.translatesAutoresizingMaskIntoConstraints = NO;
+    [AutoLayout leadingConstraintFrom:self.endDate toView:self.view];
+    [AutoLayout trailingConstraintFrom:self.endDate toView:self.view];
+    [AutoLayout topConstraintFrom:self.endDate toView:self.view withOffset:topLayoutHeight];
 }
 
 @end
