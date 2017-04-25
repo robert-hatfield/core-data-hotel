@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "AutoLayout.h"
+#import "HotelsViewController.h"
 
 @interface ViewController ()
 
@@ -50,6 +51,9 @@
 
 -(void) browseButtonSelected {
     NSLog(@"Browse button was selected.");
+    
+    HotelsViewController *hotelsVC = [[HotelsViewController alloc] init];
+    [self.navigationController pushViewController:hotelsVC animated:YES];
 }
 
 -(UIButton *) createButtonWithTitle:(NSString *) title {

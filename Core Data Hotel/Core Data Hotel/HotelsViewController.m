@@ -25,10 +25,13 @@
     [super loadView];
     
     // Add tableView as subview and apply constraints
+    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    [self.view addSubview:self.tableView];
 }
 
 -(void)viewDidLoad {
     [super viewDidLoad];
+    
     self.tableView.dataSource = self;
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
     
@@ -40,7 +43,7 @@
         
         NSManagedObjectContext *context = appDelegate.persistentContainer.viewContext;
         
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Hotels"];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Hotel"];
         
         NSError *fetchError;
         NSArray *hotels = [context executeFetchRequest:request error:&fetchError];
@@ -56,7 +59,6 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSLog(@"%lu", (unsigned long)[self allHotels].count);
     return [self allHotels].count;
 }
 
