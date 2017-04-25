@@ -42,6 +42,7 @@
     }
     
     AvailabilityViewController *availabilityVC = [[AvailabilityViewController alloc] init];
+    availabilityVC.endDate = endDate;
     [self.navigationController pushViewController:availabilityVC animated:YES];
 }
 
