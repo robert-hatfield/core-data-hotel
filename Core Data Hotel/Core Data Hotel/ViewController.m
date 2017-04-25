@@ -41,6 +41,9 @@
     }
     
     NSLayoutConstraint *browseButtonHeight = [AutoLayout equalHeightConstraintFromView:browseButton toView:self.view withMultiplier:0.33];
+    // Reduce button height proportionally by navBarHeight 
+    browseButtonHeight.constant = 0 - navBarHeight * browseButtonHeight.multiplier;
+    
     NSLayoutConstraint *browseButtonTop = [AutoLayout topConstraintFrom:browseButton toView:self.view];
     browseButtonTop.constant = navBarHeight;
     
