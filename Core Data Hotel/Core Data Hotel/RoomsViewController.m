@@ -38,30 +38,6 @@
     self.roomsInHotel = [[self.hotel rooms] allObjects];
 }
 
-//-(NSArray *)roomsInHotel {
-//    if (!_roomsInHotel) {
-//        
-//        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-//        
-//        NSManagedObjectContext *context = appDelegate.persistentContainer.viewContext;
-//        
-//        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Room"];
-////        [request setPredicate: [NSPredicate predicateWithFormat:@"hotel == %@", self.hotel.name]];
-//        
-//        NSError *fetchError;
-//        NSArray *rooms = [context executeFetchRequest:request error:&fetchError];
-//        
-//        if (fetchError) {
-//            NSLog(@"An error occurred while fetching rooms from Core Data.");
-//        }
-//        
-//        _roomsInHotel = rooms;
-//    
-//    }
-//    
-//    return _roomsInHotel;
-//}
-
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self roomsInHotel].count;
 }
