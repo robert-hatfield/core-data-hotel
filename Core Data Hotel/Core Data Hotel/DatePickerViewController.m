@@ -14,6 +14,7 @@
 
 @property (strong, nonatomic) UIDatePicker *startDate;
 @property (strong, nonatomic) UIDatePicker *endDate;
+@property (strong, nonatomic) NSCalendar *calendar;
 
 @end
 
@@ -21,6 +22,8 @@
 
 -(void)loadView {
     [super loadView];
+    self.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+
     [self setupDatePickers];
     [self setupDoneButton];
     [self.view setBackgroundColor:[UIColor whiteColor]];
@@ -37,8 +40,6 @@
 -(void)doneButtonPressed {
     NSDate *startDate = self.startDate.date;
     NSDate *endDate = self.endDate.date;
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    [calendar isDateInToday:endDate];
     
     if ([endDate timeIntervalSinceReferenceDate] < [startDate timeIntervalSinceReferenceDate]) {
         NSLog(@"End date occurs before start date");
@@ -57,6 +58,11 @@
     // Do any additional setup after loading the view.
 }
 
+- (void)updateEndDate {
+    NSLog(@"Start date was changed");
+        self.endDate.date = [self.calendar dateByAddingUnit:NSCalendarUnitDay value:1 toDate:self.startDate.date options:NSCalendarMatchFirst];
+}
+
 - (void)setupDatePickers {
     self.startDate = [[UIDatePicker alloc] init];
     self.endDate = [[UIDatePicker alloc] init];
@@ -72,6 +78,8 @@
         [AutoLayout trailingConstraintFrom:picker toView:self.view];
     }
     
+    [self updateEndDate];
+    [self.startDate addTarget:self action:@selector(updateEndDate) forControlEvents:UIControlEventValueChanged];
     CGFloat topLayoutHeight = CGRectGetHeight(self.navigationController.navigationBar.frame) + 20;
     [AutoLayout topConstraintFrom:self.startDate toView:self.view withOffset:topLayoutHeight];
     [AutoLayout topConstraintFrom:self.endDate toView:self.view withOffset:self.startDate.frame.size.height];
