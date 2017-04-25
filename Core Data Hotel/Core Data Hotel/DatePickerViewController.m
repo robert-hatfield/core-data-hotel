@@ -12,6 +12,7 @@
 
 @interface DatePickerViewController ()
 
+@property (strong, nonatomic) UIDatePicker *startDate;
 @property (strong, nonatomic) UIDatePicker *endDate;
 
 @end
@@ -34,13 +35,17 @@
 }
 
 -(void)doneButtonPressed {
+    NSDate *startDate = self.startDate.date;
     NSDate *endDate = self.endDate.date;
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    [calendar isDateInToday:endDate];
     
-    if ([[NSDate date] timeIntervalSinceReferenceDate] > [endDate timeIntervalSinceReferenceDate]) {
-        NSLog(@"This date is in the past!");
-        self.endDate.date = [NSDate date];
+    if ([endDate timeIntervalSinceReferenceDate] < [startDate timeIntervalSinceReferenceDate]) {
+        NSLog(@"End date occurs before start date");
+        self.endDate.date = self.startDate.date;
         return;
     }
+
     
     AvailabilityViewController *availabilityVC = [[AvailabilityViewController alloc] init];
     availabilityVC.endDate = endDate;
@@ -53,16 +58,23 @@
 }
 
 - (void)setupDatePickers {
+    self.startDate = [[UIDatePicker alloc] init];
     self.endDate = [[UIDatePicker alloc] init];
-    self.endDate.datePickerMode = UIDatePickerModeDate;
-
-    [self.view addSubview:self.endDate];
-
+    
+    NSArray *datePickers = [NSArray arrayWithObjects:self.startDate, self.endDate, nil];
+    
+    for (UIDatePicker *picker in datePickers) {
+        picker.datePickerMode = UIDatePickerModeDate;
+        picker.minimumDate = [NSDate date];
+        [self.view addSubview:picker];
+        picker.translatesAutoresizingMaskIntoConstraints = NO;
+        [AutoLayout leadingConstraintFrom:picker toView:self.view];
+        [AutoLayout trailingConstraintFrom:picker toView:self.view];
+    }
+    
     CGFloat topLayoutHeight = CGRectGetHeight(self.navigationController.navigationBar.frame) + 20;
-    self.endDate.translatesAutoresizingMaskIntoConstraints = NO;
-    [AutoLayout leadingConstraintFrom:self.endDate toView:self.view];
-    [AutoLayout trailingConstraintFrom:self.endDate toView:self.view];
-    [AutoLayout topConstraintFrom:self.endDate toView:self.view withOffset:topLayoutHeight];
+    [AutoLayout topConstraintFrom:self.startDate toView:self.view withOffset:topLayoutHeight];
+    [AutoLayout topConstraintFrom:self.endDate toView:self.view withOffset:self.startDate.frame.size.height];
 }
 
 @end
