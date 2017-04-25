@@ -40,15 +40,9 @@
 -(void)doneButtonPressed {
     NSDate *startDate = self.startDate.date;
     NSDate *endDate = self.endDate.date;
-    
-    if ([endDate timeIntervalSinceReferenceDate] < [startDate timeIntervalSinceReferenceDate]) {
-        NSLog(@"End date occurs before start date");
-        self.endDate.date = self.startDate.date;
-        return;
-    }
 
-    
     AvailabilityViewController *availabilityVC = [[AvailabilityViewController alloc] init];
+    availabilityVC.startDate = startDate;
     availabilityVC.endDate = endDate;
     [self.navigationController pushViewController:availabilityVC animated:YES];
 }
@@ -59,8 +53,10 @@
 }
 
 - (void)updateEndDate {
-    NSLog(@"Start date was changed");
-        self.endDate.date = [self.calendar dateByAddingUnit:NSCalendarUnitDay value:1 toDate:self.startDate.date options:NSCalendarMatchFirst];
+    self.endDate.minimumDate = [self.calendar dateByAddingUnit:NSCalendarUnitDay
+                                                  value:1
+                                                 toDate:self.startDate.date
+                                                options:NSCalendarMatchFirst];
 }
 
 - (void)setupDatePickers {
