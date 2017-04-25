@@ -83,4 +83,11 @@
     return [AutoLayout genericConstraintFrom:view toView:otherView withAttribute:NSLayoutAttributeTrailing];
 }
 
++(NSLayoutConstraint *)topConstraintFrom:(UIView *)view
+                                  toView:(UIView *)otherView{
+    return [AutoLayout genericConstraintFrom:view
+                                      toView:otherView
+                               withAttribute:NSLayoutAttributeTop];
+}
+
 @end

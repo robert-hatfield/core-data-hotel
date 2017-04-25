@@ -41,10 +41,10 @@
     }
     
     NSLayoutConstraint *browseButtonHeight = [AutoLayout equalHeightConstraintFromView:browseButton toView:self.view withMultiplier:0.33];
+    NSLayoutConstraint *browseButtonTop = [AutoLayout topConstraintFrom:browseButton toView:self.view];
+    browseButtonTop.constant = navBarHeight;
     
-//    TODO: offset by height of navbar
-//    browseButtonHeight.constant = navBarHeight;
-    
+    [NSLayoutConstraint activateConstraints:[NSArray arrayWithObjects:browseButtonHeight, browseButtonTop, nil]];
     
     [browseButton addTarget:self action:@selector(browseButtonSelected) forControlEvents:UIControlEventTouchUpInside];
 }
