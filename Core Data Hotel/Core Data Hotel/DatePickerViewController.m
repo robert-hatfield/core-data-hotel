@@ -7,6 +7,7 @@
 //
 
 #import "DatePickerViewController.h"
+#import "AvailabilityViewController.h"
 
 @interface DatePickerViewController ()
 
@@ -39,6 +40,9 @@
         self.endDate.date = [NSDate date];
         return;
     }
+    
+    AvailabilityViewController *availabilityVC = [[AvailabilityViewController alloc] init];
+    [self.navigationController pushViewController:availabilityVC animated:YES];
 }
 
 - (void)viewDidLoad {
