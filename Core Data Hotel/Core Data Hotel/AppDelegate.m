@@ -77,9 +77,12 @@
                                  insertNewObjectForEntityForName:@"Room"
                                  inManagedObjectContext:self.persistentContainer.viewContext];
                 
-                newRoom.number = (NSInteger)room[@"number"];
-                newRoom.beds = (NSInteger)room[@"beds"];
-                newRoom.rate = (NSInteger)room[@"rate"];
+                NSNumber *number = room[@"number"];
+                newRoom.number = [number integerValue];
+                number = room[@"beds"];
+                newRoom.beds = [number integerValue];
+                number = room[@"rate"];
+                newRoom.rate = [number floatValue];
                 
                 newRoom.hotel = newHotel;
             }
