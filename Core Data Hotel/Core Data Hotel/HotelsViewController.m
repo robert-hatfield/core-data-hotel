@@ -8,14 +8,15 @@
 
 #import "HotelsViewController.h"
 #import "AppDelegate.h"
+#import "RoomsViewController.h"
 
 #import "Hotel+CoreDataClass.h"
 #import "Hotel+CoreDataProperties.h"
 
-@interface HotelsViewController () <UITableViewDataSource>
+@interface HotelsViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (strong, nonatomic) NSArray *allHotels;
-@property (strong, nonatomic) UITableView *tableView;
+@property (strong, nonatomic) UITableView *hotelTableView;
 
 @end
 
@@ -25,15 +26,18 @@
     [super loadView];
     
     // Add tableView as subview and apply constraints
-    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
-    [self.view addSubview:self.tableView];
+    self.hotelTableView = [[UITableView alloc] initWithFrame:self.view.bounds
+                                                  style:UITableViewStylePlain];
+    [self.view addSubview:self.hotelTableView];
 }
 
 -(void)viewDidLoad {
     [super viewDidLoad];
     
-    self.tableView.dataSource = self;
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
+    self.hotelTableView.dataSource = self;
+    self.hotelTableView.delegate = self;
+    [self.hotelTableView registerClass:[UITableViewCell class]
+           forCellReuseIdentifier:@"cell"];
     
 }
 
@@ -66,12 +70,19 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     int index = (int)indexPath.row;
-    Hotel *hotel = [[self allHotels ] objectAtIndex:index];
+    Hotel *hotel = [[self allHotels] objectAtIndex:index];
     cell.textLabel.text = hotel.name;
     
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    RoomsViewController *roomsVC = [[RoomsViewController alloc] init];
+    
+    roomsVC.hotel = [[self allHotels] objectAtIndex:(int) indexPath.row];
+    
+    [self.navigationController pushViewController:roomsVC animated:YES];
 
+}
 
 @end
