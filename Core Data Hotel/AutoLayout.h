@@ -38,5 +38,5 @@
 
 + (NSLayoutConstraint *)width:(CGFloat)width forView:(UIView *)view;
 
-+ (NSLayoutConstraint *)topOffset:(CGFloat)offset forView:(UIView *)view toView:(UIView *)otherView;
++ (NSLayoutConstraint *)topConstraintFrom:(UIView *)view toView:(UIView *)otherView withOffset:(CGFloat)offset;
 @end

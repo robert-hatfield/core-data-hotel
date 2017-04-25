@@ -44,10 +44,10 @@
         [AutoLayout leadingConstraintFrom:button toView:self.view];
         [AutoLayout trailingConstraintFrom:button toView:self.view];
     }
-    [AutoLayout topOffset:topLayoutHeight forView:browseButton toView:self.view];
-    [AutoLayout topOffset:buttonHeight + topLayoutHeight forView:bookButton toView:self.view];
-    [AutoLayout topOffset:buttonHeight * 2 + topLayoutHeight forView:lookupButton toView:self.view];
-
+    [AutoLayout topConstraintFrom:browseButton toView:self.view withOffset:topLayoutHeight];
+    [AutoLayout topConstraintFrom:bookButton toView:self.view withOffset:buttonHeight + topLayoutHeight];
+    [AutoLayout topConstraintFrom:lookupButton toView:self.view withOffset:buttonHeight * 2 + topLayoutHeight];
+    
     
     // Set up button actions
     [browseButton addTarget:self action:@selector(browseButtonSelected) forControlEvents:UIControlEventTouchUpInside];
