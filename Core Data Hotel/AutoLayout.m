@@ -61,7 +61,7 @@
 
 +(NSLayoutConstraint *)equalHeightConstraintFromView:(UIView *)view
                                               toView:(UIView *)otherView
-                                      withMultiplier:(CGFloat)multiplier{
+                                      withMultiplier:(CGFloat)multiplier {
     
     NSLayoutConstraint *heightConstraint = [AutoLayout
                                             genericConstraintFrom:view
@@ -69,6 +69,17 @@
                                             withAttribute:NSLayoutAttributeHeight
                                             andMultiplier:multiplier];
     return heightConstraint;
+}
+
++(NSLayoutConstraint *)equalWidthConstraintFromView:(UIView *)view
+                                             toView:(UIView *)otherView
+                                     withMultiplier:(CGFloat)multiplier {
+    
+    NSLayoutConstraint *widthConstraint = [AutoLayout genericConstraintFrom:view
+                                                                     toView:otherView
+                                                              withAttribute:NSLayoutAttributeWidth
+                                                              andMultiplier:multiplier];
+    return widthConstraint;
 }
 
 +(NSLayoutConstraint *)leadingConstraintFrom:(UIView *)view
