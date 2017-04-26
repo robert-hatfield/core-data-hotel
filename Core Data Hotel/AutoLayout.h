@@ -25,6 +25,10 @@
                                               toView:(UIView *)otherView
                                       withMultiplier:(CGFloat)multiplier;
 
++(NSLayoutConstraint *)equalWidthConstraintFromView:(UIView *)view
+                                             toView:(UIView *)otherView
+                                     withMultiplier:(CGFloat)multiplier;
+
 +(NSLayoutConstraint *)leadingConstraintFrom:(UIView *)view
                                       toView:(UIView *)otherView;
 
@@ -34,4 +38,9 @@
 +(NSLayoutConstraint *)topConstraintFrom:(UIView *)view
                                   toView:(UIView *)otherView;
 
++ (NSLayoutConstraint *)height:(CGFloat)height forView:(UIView *)view;
+
++ (NSLayoutConstraint *)width:(CGFloat)width forView:(UIView *)view;
+
++ (NSLayoutConstraint *)topConstraintFrom:(UIView *)view toView:(UIView *)otherView withOffset:(CGFloat)offset;
 @end

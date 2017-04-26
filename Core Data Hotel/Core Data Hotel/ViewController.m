@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "AutoLayout.h"
 #import "HotelsViewController.h"
+#import "DatePickerViewController.h"
 
 @interface ViewController ()
 
@@ -25,31 +26,32 @@
 
 -(void) setupLayout {
     
-    float navBarHeight = CGRectGetHeight(self.navigationController.navigationBar.frame);
-    
+    CGFloat topLayoutHeight = CGRectGetHeight(self.navigationController.navigationBar.frame) + 20;
+    CGFloat buttonHeight = (self.view.bounds.size.height - topLayoutHeight) / 3;
+
     UIButton *browseButton = [self createButtonWithTitle:@"Browse"];
     UIButton *bookButton = [self createButtonWithTitle:@"Book"];
     UIButton *lookupButton = [self createButtonWithTitle:@"Look Up"];
     
     browseButton.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:0.75 alpha:1.0];
-    
+    bookButton.backgroundColor = [UIColor redColor];
+    lookupButton.backgroundColor = [UIColor grayColor];
     NSArray *buttons = [NSArray arrayWithObjects:browseButton, bookButton, lookupButton, nil];
     
     for (UIButton *button in buttons) {
+        [AutoLayout height:buttonHeight forView:button];
+
         [AutoLayout leadingConstraintFrom:button toView:self.view];
         [AutoLayout trailingConstraintFrom:button toView:self.view];
     }
+    [AutoLayout topConstraintFrom:browseButton toView:self.view withOffset:topLayoutHeight];
+    [AutoLayout topConstraintFrom:bookButton toView:self.view withOffset:buttonHeight + topLayoutHeight];
+    [AutoLayout topConstraintFrom:lookupButton toView:self.view withOffset:buttonHeight * 2 + topLayoutHeight];
     
-    NSLayoutConstraint *browseButtonHeight = [AutoLayout equalHeightConstraintFromView:browseButton toView:self.view withMultiplier:0.33];
-    // Reduce button height proportionally by navBarHeight 
-    browseButtonHeight.constant = 0 - navBarHeight * browseButtonHeight.multiplier;
     
-    NSLayoutConstraint *browseButtonTop = [AutoLayout topConstraintFrom:browseButton toView:self.view];
-    browseButtonTop.constant = navBarHeight;
-    
-    [NSLayoutConstraint activateConstraints:[NSArray arrayWithObjects:browseButtonHeight, browseButtonTop, nil]];
-    
+    // Set up button actions
     [browseButton addTarget:self action:@selector(browseButtonSelected) forControlEvents:UIControlEventTouchUpInside];
+    [bookButton addTarget:self action:@selector(bookButtonSelected) forControlEvents:UIControlEventTouchUpInside];
 }
 
 -(void) browseButtonSelected {
@@ -57,6 +59,12 @@
     
     HotelsViewController *hotelsVC = [[HotelsViewController alloc] init];
     [self.navigationController pushViewController:hotelsVC animated:YES];
+}
+
+
+-(void) bookButtonSelected {
+    DatePickerViewController *datePickerVC = [[DatePickerViewController alloc] init];
+    [self.navigationController pushViewController:datePickerVC animated:YES];
 }
 
 -(UIButton *) createButtonWithTitle:(NSString *) title {

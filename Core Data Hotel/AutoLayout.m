@@ -61,7 +61,7 @@
 
 +(NSLayoutConstraint *)equalHeightConstraintFromView:(UIView *)view
                                               toView:(UIView *)otherView
-                                      withMultiplier:(CGFloat)multiplier{
+                                      withMultiplier:(CGFloat)multiplier {
     
     NSLayoutConstraint *heightConstraint = [AutoLayout
                                             genericConstraintFrom:view
@@ -69,6 +69,17 @@
                                             withAttribute:NSLayoutAttributeHeight
                                             andMultiplier:multiplier];
     return heightConstraint;
+}
+
++(NSLayoutConstraint *)equalWidthConstraintFromView:(UIView *)view
+                                             toView:(UIView *)otherView
+                                     withMultiplier:(CGFloat)multiplier {
+    
+    NSLayoutConstraint *widthConstraint = [AutoLayout genericConstraintFrom:view
+                                                                     toView:otherView
+                                                              withAttribute:NSLayoutAttributeWidth
+                                                              andMultiplier:multiplier];
+    return widthConstraint;
 }
 
 +(NSLayoutConstraint *)leadingConstraintFrom:(UIView *)view
@@ -89,5 +100,23 @@
                                       toView:otherView
                                withAttribute:NSLayoutAttributeTop];
 }
+
++ (NSLayoutConstraint *)height:(CGFloat)height forView:(UIView *)view {
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:height];
+    constraint.active = YES;
+    return constraint;
+}
++ (NSLayoutConstraint *)width:(CGFloat)width forView:(UIView *)view {
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:width];
+    constraint.active = YES;
+    return constraint;
+}
+
++ (NSLayoutConstraint *)topConstraintFrom:(UIView *)view toView:(UIView *)otherView withOffset:(CGFloat)offset {
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:otherView attribute:NSLayoutAttributeTop multiplier:1.0 constant:offset];
+    constraint.active = YES;
+    return constraint;
+}
+
 
 @end
