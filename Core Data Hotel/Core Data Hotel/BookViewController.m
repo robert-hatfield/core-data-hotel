@@ -67,8 +67,7 @@
     [AutoLayout topConstraintFrom:self.firstNameField toView:self.view withOffset:topLayoutHeight + 8];
     [AutoLayout topConstraintFrom:self.lastNameField toView:self.firstNameField withOffset: topLayoutHeight + self.firstNameField.bounds.size.height + 8];
     [AutoLayout topConstraintFrom:self.emailField toView:self.lastNameField withOffset:topLayoutHeight + self.lastNameField.bounds.size.height + 8];
-    
-    
+
 }
 
 - (void)setupBookButton {
@@ -88,7 +87,7 @@
 }
 
 - (void)bookReservation {
-    NSLog(@"Reservation requested for room %u at %@...", self.room.number, self.room.hotel.name);
+    NSLog(@"Reservation requested for room %ul at %@...", self.room.number, self.room.hotel.name);
     NSLog(@"Name: %@ %@", self.firstNameField.text, self.lastNameField.text);
     NSLog(@"Email: %@", self.emailField.text);
     
