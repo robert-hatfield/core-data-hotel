@@ -43,8 +43,13 @@
             [unavailableRooms addObject:reservation.room];
         }
         
+        NSSortDescriptor *hotelDescriptor = [[NSSortDescriptor alloc] initWithKey:@"hotel.name" ascending:YES];
+        NSSortDescriptor *numberDescriptor = [[NSSortDescriptor alloc] initWithKey:@"number" ascending:YES];
+        NSArray *sortDescriptors = [NSArray arrayWithObjects:hotelDescriptor, numberDescriptor, nil];
+        
         NSFetchRequest *roomRequest = [NSFetchRequest fetchRequestWithEntityName:@"Room"];
         roomRequest.predicate = [NSPredicate predicateWithFormat:@"NOT self IN %@", unavailableRooms];
+        roomRequest.sortDescriptors = sortDescriptors;
         
         NSError *roomError;
         _availableRooms = [appDelegate.persistentContainer.viewContext executeFetchRequest:roomRequest error:&roomError];
@@ -92,7 +97,10 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     BookViewController *bookVC = [[BookViewController alloc] init];
+    
     bookVC.room = [[self availableRooms] objectAtIndex:(int)indexPath.row];
+    bookVC.startDate = self.startDate;
+    bookVC.endDate = self.endDate;
     
     [self.navigationController pushViewController:bookVC animated:YES];
 }
