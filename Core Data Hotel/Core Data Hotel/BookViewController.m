@@ -38,6 +38,8 @@
     self.lastNameField.placeholder = @"Last name";
     self.emailField = [[UITextField alloc] init];
     self.emailField.placeholder = @"Email address";
+    self.emailField.keyboardType = UIKeyboardTypeEmailAddress;
+    self.emailField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     
     NSArray *textFields = [NSArray arrayWithObjects:self.firstNameField, self.lastNameField, self.emailField, nil];
     
@@ -45,6 +47,7 @@
         [self.view addSubview:textField];
         textField.translatesAutoresizingMaskIntoConstraints = NO;
         textField.borderStyle = UITextBorderStyleRoundedRect;
+        textField.spellCheckingType = UITextSpellCheckingTypeNo;
         [AutoLayout leadingConstraintFrom:textField toView:self.view];
         [AutoLayout trailingConstraintFrom:textField toView:self.view];
     }
@@ -65,6 +68,8 @@
 
 - (void)bookReservation {
     NSLog(@"You've reserved a room!");
+    NSLog(@"Name: %@ %@", self.firstNameField.text, self.lastNameField.text);
+    NSLog(@"Email: %@", self.emailField.text);
 }
 
 @end
