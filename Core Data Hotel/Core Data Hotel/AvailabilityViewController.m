@@ -9,6 +9,7 @@
 #import "AvailabilityViewController.h"
 #import "AutoLayout.h"
 #import "AppDelegate.h"
+#import "BookViewController.h"
 #import "Reservation+CoreDataClass.h"
 #import "Reservation+CoreDataProperties.h"
 #import "Room+CoreDataClass.h"
@@ -16,7 +17,7 @@
 #import "Hotel+CoreDataClass.h"
 #import "Hotel+CoreDataProperties.h"
 
-@interface AvailabilityViewController () <UITableViewDataSource>
+@interface AvailabilityViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) NSArray *availableRooms;
@@ -67,7 +68,10 @@
 - (void)setupTableView {
     self.tableView = [[UITableView alloc] init];
     [self.view addSubview:self.tableView];
+    
     self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     [AutoLayout fullScreenConstraintsWithVFLForView:self.tableView];
@@ -84,6 +88,13 @@
     cell.textLabel.text = [NSString stringWithFormat:@"%@: %i", currentRoom.hotel.name, currentRoom.number];
     
     return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    BookViewController *bookVC = [[BookViewController alloc] init];
+    bookVC.room = [[self availableRooms] objectAtIndex:(int)indexPath.row];
+    
+    [self.navigationController pushViewController:bookVC animated:YES];
 }
 
 @end
