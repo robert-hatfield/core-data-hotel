@@ -20,18 +20,17 @@
 @interface AvailabilityViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
-@property (strong, nonatomic) NSArray *availableRooms;
+@property (strong, nonatomic) NSFetchedResultsController *availableRooms;
 
 @end
 
 @implementation AvailabilityViewController
 
-- (NSArray *)availableRooms {
+- (NSFetchedResultsController *)availableRooms {
     if (!_availableRooms) {
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
         
         NSFetchRequest *reservationRequest = [NSFetchRequest fetchRequestWithEntityName:@"Reservation"];
-        //Assign start date once that picker is set up
         reservationRequest.predicate = [NSPredicate predicateWithFormat:@"startDate <= %@ AND endDate >= %@", self.endDate, [NSDate date]];
         
         NSError *reservationError;
@@ -43,16 +42,25 @@
             [unavailableRooms addObject:reservation.room];
         }
         
-        NSSortDescriptor *hotelDescriptor = [[NSSortDescriptor alloc] initWithKey:@"hotel.name" ascending:YES];
-        NSSortDescriptor *numberDescriptor = [[NSSortDescriptor alloc] initWithKey:@"number" ascending:YES];
-        NSArray *sortDescriptors = [NSArray arrayWithObjects:hotelDescriptor, numberDescriptor, nil];
         
         NSFetchRequest *roomRequest = [NSFetchRequest fetchRequestWithEntityName:@"Room"];
         roomRequest.predicate = [NSPredicate predicateWithFormat:@"NOT self IN %@", unavailableRooms];
+
+        // Create sort descriptors. The first descriptor will be used for creating sections in the table view.
+        NSSortDescriptor *hotelDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"hotel.name" ascending:YES];
+        NSSortDescriptor *numberDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"number" ascending:YES];
+        NSArray *sortDescriptors = [NSArray arrayWithObjects:hotelDescriptor, numberDescriptor, nil];
+        
         roomRequest.sortDescriptors = sortDescriptors;
         
         NSError *roomError;
-        _availableRooms = [appDelegate.persistentContainer.viewContext executeFetchRequest:roomRequest error:&roomError];
+        
+        // Assign NSFetchedResultsController to _availableRooms
+        _availableRooms = [[NSFetchedResultsController alloc] initWithFetchRequest:roomRequest
+                                                              managedObjectContext:appDelegate.persistentContainer.viewContext
+                                                                sectionNameKeyPath:@"hotel.name" cacheName:nil];
+        
+        [_availableRooms performFetch:&roomError];
     }
     
     return _availableRooms;
@@ -62,12 +70,6 @@
     [super loadView];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self setupTableView];
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
 }
 
 - (void)setupTableView {
@@ -83,13 +85,15 @@
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.availableRooms.count;
+    id<NSFetchedResultsSectionInfo> sectionInfo = [[self.availableRooms sections] objectAtIndex:section];
+    return sectionInfo.numberOfObjects;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     
-    Room *currentRoom = self.availableRooms[indexPath.row];
+    Room *currentRoom = [self.availableRooms objectAtIndexPath:indexPath];
+    
     cell.textLabel.text = [NSString stringWithFormat:@"%@: %i", currentRoom.hotel.name, currentRoom.number];
     
     return cell;
@@ -98,11 +102,22 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     BookViewController *bookVC = [[BookViewController alloc] init];
     
-    bookVC.room = [[self availableRooms] objectAtIndex:(int)indexPath.row];
+    bookVC.room = [[self availableRooms] objectAtIndexPath:indexPath];
+
     bookVC.startDate = self.startDate;
     bookVC.endDate = self.endDate;
     
     [self.navigationController pushViewController:bookVC animated:YES];
+}
+
+-(NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
+    return self.availableRooms.sections.count;
+}
+
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    id<NSFetchedResultsSectionInfo> sectionInfo = [self.availableRooms.sections objectAtIndex:section];
+    
+    return sectionInfo.name;
 }
 
 @end
