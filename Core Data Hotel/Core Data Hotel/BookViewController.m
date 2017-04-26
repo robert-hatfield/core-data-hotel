@@ -102,6 +102,7 @@
     newReservation.room = self.room;
     newReservation.startDate = self.startDate;
     newReservation.endDate = self.endDate;
+    newReservation.guest = newGuest;
     
     NSError *saveError;
     [appDelegate.persistentContainer.viewContext save:&saveError];
