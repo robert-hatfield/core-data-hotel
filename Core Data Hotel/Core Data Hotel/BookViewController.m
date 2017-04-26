@@ -9,7 +9,7 @@
 #import "BookViewController.h"
 #import "AutoLayout.h"
 
-@interface BookViewController ()
+@interface BookViewController () <UITextFieldDelegate>
 
 @property (strong, nonatomic) UITextField *firstNameField;
 @property (strong, nonatomic) UITextField *lastNameField;
@@ -45,12 +45,16 @@
     
     for (UITextField *textField in textFields) {
         [self.view addSubview:textField];
+        textField.delegate = self;
+        
         textField.translatesAutoresizingMaskIntoConstraints = NO;
         textField.borderStyle = UITextBorderStyleRoundedRect;
         textField.spellCheckingType = UITextSpellCheckingTypeNo;
         [AutoLayout leadingConstraintFrom:textField toView:self.view];
         [AutoLayout trailingConstraintFrom:textField toView:self.view];
     }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkReservationInput) name:UITextFieldTextDidChangeNotification object:nil];
     
     CGFloat topLayoutHeight = CGRectGetHeight(self.navigationController.navigationBar.frame) + 20;
     [AutoLayout topConstraintFrom:self.firstNameField toView:self.view withOffset:topLayoutHeight + 8];
@@ -63,7 +67,19 @@
 - (void)setupBookButton {
     UIBarButtonItem *bookReservationButton= [[UIBarButtonItem alloc] initWithTitle:@"Book Reservation" style:UIBarButtonItemStyleDone target:self action:@selector(bookReservation)];
     [self.navigationItem setRightBarButtonItem:bookReservationButton];
+    [bookReservationButton setEnabled:NO];
     
+}
+
+- (void)checkReservationInput {
+    // Ensure text is present for first & last name
+    if (self.firstNameField.text.length && self.lastNameField.text.length) {
+        NSLog(@"Enabled");
+        [self.navigationItem.rightBarButtonItem setEnabled:YES];
+    } else {
+        NSLog(@"Disabled");
+        [self.navigationItem.rightBarButtonItem setEnabled:NO];
+    }
 }
 
 - (void)bookReservation {
