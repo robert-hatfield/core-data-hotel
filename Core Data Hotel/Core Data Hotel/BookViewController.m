@@ -8,6 +8,13 @@
 
 #import "BookViewController.h"
 #import "AutoLayout.h"
+#import "AppDelegate.h"
+#import "Room+CoreDataClass.h"
+#import "Room+CoreDataProperties.h"
+#import "Guest+CoreDataClass.h"
+#import "Guest+CoreDataProperties.h"
+#import "Hotel+CoreDataClass.h"
+#import "Hotel+CoreDataProperties.h"
 
 @interface BookViewController () <UITextFieldDelegate>
 
@@ -74,18 +81,38 @@
 - (void)checkReservationInput {
     // Ensure text is present for first & last name
     if (self.firstNameField.text.length && self.lastNameField.text.length) {
-        NSLog(@"Enabled");
         [self.navigationItem.rightBarButtonItem setEnabled:YES];
     } else {
-        NSLog(@"Disabled");
         [self.navigationItem.rightBarButtonItem setEnabled:NO];
     }
 }
 
 - (void)bookReservation {
-    NSLog(@"You've reserved a room!");
+    NSLog(@"Reservation requested for room %u at %@...", self.room.number, self.room.hotel.name);
     NSLog(@"Name: %@ %@", self.firstNameField.text, self.lastNameField.text);
     NSLog(@"Email: %@", self.emailField.text);
+    
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+    
+    Guest *newGuest = [NSEntityDescription insertNewObjectForEntityForName:@"Guest" inManagedObjectContext:appDelegate.persistentContainer.viewContext];
+    newGuest.firstName = self.firstNameField.text;
+    newGuest.lastName = self.lastNameField.text;
+    newGuest.email = self.emailField.text;
+    
+    Reservation *newReservation = [NSEntityDescription insertNewObjectForEntityForName:@"Reservation" inManagedObjectContext:appDelegate.persistentContainer.viewContext];
+    newReservation.room = self.room;
+    newReservation.startDate = self.startDate;
+    newReservation.endDate = self.endDate;
+    
+    NSError *saveError;
+    [appDelegate.persistentContainer.viewContext save:&saveError];
+    if (saveError) {
+        NSLog(@"An error occurred when saving reservation to Core Data.");
+    } else {
+        NSLog(@"New reservation successfully saved to Core Data.");
+    }
+    
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end
