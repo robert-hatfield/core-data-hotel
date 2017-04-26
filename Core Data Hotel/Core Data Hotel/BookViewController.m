@@ -7,8 +7,13 @@
 //
 
 #import "BookViewController.h"
+#import "AutoLayout.h"
 
 @interface BookViewController ()
+
+@property (strong, nonatomic) UITextField *firstNameField;
+@property (strong, nonatomic) UITextField *lastNameField;
+@property (strong, nonatomic) UITextField *emailField;
 
 @end
 
@@ -27,16 +32,39 @@
 
 - (void)setupBookView {
     [self setupBookButton];
+    self.firstNameField = [[UITextField alloc] init];
+    self.firstNameField.placeholder = @"First name";
+    self.lastNameField = [[UITextField alloc] init];
+    self.lastNameField.placeholder = @"Last name";
+    self.emailField = [[UITextField alloc] init];
+    self.emailField.placeholder = @"Email address";
+    
+    NSArray *textFields = [NSArray arrayWithObjects:self.firstNameField, self.lastNameField, self.emailField, nil];
+    
+    for (UITextField *textField in textFields) {
+        [self.view addSubview:textField];
+        textField.translatesAutoresizingMaskIntoConstraints = NO;
+        textField.borderStyle = UITextBorderStyleRoundedRect;
+        [AutoLayout leadingConstraintFrom:textField toView:self.view];
+        [AutoLayout trailingConstraintFrom:textField toView:self.view];
+    }
+    
+    CGFloat topLayoutHeight = CGRectGetHeight(self.navigationController.navigationBar.frame) + 20;
+    [AutoLayout topConstraintFrom:self.firstNameField toView:self.view withOffset:topLayoutHeight + 8];
+    [AutoLayout topConstraintFrom:self.lastNameField toView:self.firstNameField withOffset: topLayoutHeight + self.firstNameField.bounds.size.height + 8];
+    [AutoLayout topConstraintFrom:self.emailField toView:self.lastNameField withOffset:topLayoutHeight + self.lastNameField.bounds.size.height + 8];
+    
     
 }
 
 - (void)setupBookButton {
     UIBarButtonItem *bookReservationButton= [[UIBarButtonItem alloc] initWithTitle:@"Book Reservation" style:UIBarButtonItemStyleDone target:self action:@selector(bookReservation)];
     [self.navigationItem setRightBarButtonItem:bookReservationButton];
+    
 }
 
 - (void)bookReservation {
-    
+    NSLog(@"You've reserved a room!");
 }
 
 @end

@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "Room+CoreDataClass.h"
 #import "Room+CoreDataProperties.h"
-#import "Reservation+CoreDataClass.h"
-#import "Reservation+CoreDataProperties.h"
 
 @interface BookViewController : UIViewController
 
