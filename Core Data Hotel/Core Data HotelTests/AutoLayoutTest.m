@@ -45,10 +45,6 @@
 
 - (void)testGenericConstraintFromtoViewwithAttribute {
     
-    XCTAssertNotNil(self.testController, @"testController is nil.");
-    XCTAssertNotNil(self.testView1, @"testView1 is nil.");
-    XCTAssertNotNil(self.testView2, @"testView2 is nil.");
-    
     id constraint = [AutoLayout genericConstraintFrom:self.testView1 toView:self.testView2 withAttribute:NSLayoutAttributeTop];
     
     XCTAssert([constraint isKindOfClass:[NSLayoutConstraint class]], @"constraint is not an instance of NSLayoutConstraint.");
