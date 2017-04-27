@@ -15,6 +15,8 @@
 #import "Room+CoreDataProperties.h"
 #import "Guest+CoreDataClass.h"
 #import "Guest+CoreDataProperties.h"
+#import "Hotel+CoreDataClass.h"
+#import "Hotel+CoreDataProperties.h"
 
 
 @interface LookupReservationViewController () <UITableViewDataSource>
@@ -29,6 +31,7 @@
 - (void)loadView {
     [super loadView];
     [self.view setBackgroundColor:[UIColor whiteColor]];
+    [self setupTableView];
 }
 
 - (void)setupTableView {
@@ -42,16 +45,24 @@
     [AutoLayout fullScreenConstraintsWithVFLForView:self.tableView];
 }
 
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
+    return self.reservations.sections.count;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    id<NSFetchedResultsSectionInfo> sectionInfo = [self.reservations.sections objectAtIndex:section];
-    return sectionInfo.numberOfObjects;
+    if (self.reservations.sections.count == 0) {
+        return 0;
+    } else {
+        id<NSFetchedResultsSectionInfo> sectionInfo = [self.reservations.sections objectAtIndex:section];
+        return sectionInfo.numberOfObjects;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     
     Reservation *currentReservation = [self.reservations objectAtIndexPath:indexPath];
-    cell.textLabel.text = [NSString stringWithFormat:@"Room %hd\n%@ %@", currentReservation.room.number, currentReservation.guest.firstName, currentReservation.guest.lastName];
+    cell.textLabel.text = [NSString stringWithFormat:@"Room %u: %@ %@", currentReservation.room.number, currentReservation.guest.firstName, currentReservation.guest.lastName];
     
     return cell;
 }
@@ -67,8 +78,8 @@
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         
         NSFetchRequest *reservationRequest = [NSFetchRequest fetchRequestWithEntityName:@"Reservation"];
-        NSSortDescriptor *hotelDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"hotel.name" ascending:YES];
-        NSSortDescriptor *numberDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"number" ascending:YES];
+        NSSortDescriptor *hotelDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"room.hotel.name" ascending:YES];
+        NSSortDescriptor *numberDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"room.number" ascending:YES];
         NSArray *sortDescriptors = [NSArray arrayWithObjects:hotelDescriptor, numberDescriptor, nil];
         
         reservationRequest.sortDescriptors = sortDescriptors;
@@ -76,7 +87,7 @@
         NSError *reservationError;
         
         _reservations = [[NSFetchedResultsController alloc] initWithFetchRequest:reservationRequest
-                                                            managedObjectContext:appDelegate.persistentContainer.viewContext sectionNameKeyPath:@"hotel.name" cacheName:nil];
+                                                            managedObjectContext:appDelegate.persistentContainer.viewContext sectionNameKeyPath:@"room.hotel.name" cacheName:nil];
         
         [_reservations performFetch:&reservationError];
     }
