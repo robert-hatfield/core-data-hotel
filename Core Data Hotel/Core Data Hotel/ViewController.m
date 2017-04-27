@@ -6,6 +6,8 @@
 //  Copyright © 2017 Robert Hatfield. All rights reserved.
 //
 
+@import Crashlytics;
+
 #import "ViewController.h"
 #import "AutoLayout.h"
 #import "HotelsViewController.h"
@@ -57,18 +59,19 @@
 }
 
 -(void) browseButtonSelected {
-    NSLog(@"Browse button was selected.");
-    
+    [Answers logCustomEventWithName:@"ViewController - Browse button selected" customAttributes:nil];
     HotelsViewController *hotelsVC = [[HotelsViewController alloc] init];
     [self.navigationController pushViewController:hotelsVC animated:YES];
 }
 
 -(void) bookButtonSelected {
+    [Answers logCustomEventWithName:@"ViewController - Book button selected" customAttributes:nil];
     DatePickerViewController *datePickerVC = [[DatePickerViewController alloc] init];
     [self.navigationController pushViewController:datePickerVC animated:YES];
 }
 
 -(void) lookupButtonSelected {
+    [Answers logCustomEventWithName:@"ViewController - Lookup button selected" customAttributes:nil];
     LookupReservationViewController *lookupVC = [[LookupReservationViewController alloc] init];
     [self.navigationController pushViewController:lookupVC animated:YES];
 }

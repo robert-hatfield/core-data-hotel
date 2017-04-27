@@ -7,6 +7,8 @@
 //
 
 #import "BookViewController.h"
+@import Crashlytics;
+
 #import "AutoLayout.h"
 #import "AppDelegate.h"
 #import "Room+CoreDataClass.h"
@@ -108,8 +110,14 @@
     [appDelegate.persistentContainer.viewContext save:&saveError];
     if (saveError) {
         NSLog(@"An error occurred when saving reservation to Core Data.");
+        
+        NSDictionary *attributesDictionary = @{@"Save Error" : saveError.localizedDescription};
+        [Answers logCustomEventWithName:@"BookViewController - Save Error" customAttributes:attributesDictionary];
+        
     } else {
         NSLog(@"New reservation successfully saved to Core Data.");
+        NSDictionary *attributesDictionary = @{@"Hotel" : self.room.hotel.name};
+        [Answers logCustomEventWithName:@"Reservation booked" customAttributes:attributesDictionary];
     }
     
     [self.navigationController popToRootViewControllerAnimated:YES];

@@ -7,11 +7,14 @@
 //
 
 #import "AppDelegate.h"
+
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
+
 #import "ViewController.h"
 
 #import "Hotel+CoreDataClass.h"
 #import "Hotel+CoreDataProperties.h"
-
 #import "Room+CoreDataClass.h"
 #import "Room+CoreDataProperties.h"
 
@@ -27,7 +30,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    
+    [Fabric with:@[[Crashlytics class]]];
+
     [self setupRootViewController];
     [self bootstrapApp];
     return YES;
@@ -79,7 +83,7 @@
                 
                 newRoom.number = [(NSNumber *)room[@"number"] intValue];
                 newRoom.beds = [(NSNumber *)room[@"beds"] intValue];
-                newRoom.rate = [(NSNumber *)room[@"rate"] floatValue];
+                newRoom.cost = [(NSNumber *)room[@"cost"] floatValue];
                 
                 newRoom.hotel = newHotel;
             }
