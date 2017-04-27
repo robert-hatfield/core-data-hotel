@@ -8,10 +8,19 @@
 
 #import "LookupReservationViewController.h"
 #import "AutoLayout.h"
+#import "AppDelegate.h"
+#import "Reservation+CoreDataClass.h"
+#import "Reservation+CoreDataProperties.h"
+#import "Room+CoreDataClass.h"
+#import "Room+CoreDataProperties.h"
+#import "Guest+CoreDataClass.h"
+#import "Guest+CoreDataProperties.h"
+
 
 @interface LookupReservationViewController () <UITableViewDataSource>
 
 @property (strong, nonatomic) UITableView *tableView;
+@property (strong, nonatomic) NSFetchedResultsController *reservations;
 
 @end
 
@@ -31,6 +40,48 @@
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     [AutoLayout fullScreenConstraintsWithVFLForView:self.tableView];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    id<NSFetchedResultsSectionInfo> sectionInfo = [self.reservations.sections objectAtIndex:section];
+    return sectionInfo.numberOfObjects;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    
+    Reservation *currentReservation = [self.reservations objectAtIndexPath:indexPath];
+    cell.textLabel.text = [NSString stringWithFormat:@"Room %hd\n%@ %@", currentReservation.room.number, currentReservation.guest.firstName, currentReservation.guest.lastName];
+    
+    return cell;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    id<NSFetchedResultsSectionInfo> sectionInfo = [self.reservations.sections objectAtIndex:section];
+    
+    return sectionInfo.name;
+}
+
+- (NSFetchedResultsController *)reservations {
+    if (!_reservations) {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        
+        NSFetchRequest *reservationRequest = [NSFetchRequest fetchRequestWithEntityName:@"Reservation"];
+        NSSortDescriptor *hotelDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"hotel.name" ascending:YES];
+        NSSortDescriptor *numberDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"number" ascending:YES];
+        NSArray *sortDescriptors = [NSArray arrayWithObjects:hotelDescriptor, numberDescriptor, nil];
+        
+        reservationRequest.sortDescriptors = sortDescriptors;
+        
+        NSError *reservationError;
+        
+        _reservations = [[NSFetchedResultsController alloc] initWithFetchRequest:reservationRequest
+                                                            managedObjectContext:appDelegate.persistentContainer.viewContext sectionNameKeyPath:@"hotel.name" cacheName:nil];
+        
+        [_reservations performFetch:&reservationError];
+    }
+    
+    return _reservations;
 }
 
 @end
