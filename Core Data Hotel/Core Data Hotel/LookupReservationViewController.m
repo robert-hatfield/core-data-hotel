@@ -18,11 +18,13 @@
 #import "Hotel+CoreDataProperties.h"
 
 
-@interface LookupReservationViewController () <UITableViewDataSource>
+@interface LookupReservationViewController () <UITableViewDataSource, UISearchBarDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
-@property (strong, nonatomic) NSFetchedResultsController *reservations;
 @property (strong, nonatomic) UISearchBar *searchBar;
+@property (strong, nonatomic) NSFetchedResultsController *fetchedReservations;
+@property (strong, nonatomic) NSArray *allReservations;
+@property (strong, nonatomic) NSArray *filteredReservations;
 
 @end
 
@@ -36,46 +38,40 @@
     [self setupSubviews];
 }
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.tableView.dataSource = self;
+    self.allReservations = self.fetchedReservations.fetchedObjects;
+    self.filteredReservations = self.allReservations;
+}
+
 - (void)setupTableView {
     self.tableView = [[UITableView alloc] init];
     [self.view addSubview:self.tableView];
     
-    self.tableView.dataSource = self;
+    
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
-- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
-    return self.reservations.sections.count;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.reservations.sections.count == 0) {
-        return 0;
-    } else {
-        id<NSFetchedResultsSectionInfo> sectionInfo = [self.reservations.sections objectAtIndex:section];
-        return sectionInfo.numberOfObjects;
-    }
+    return self.filteredReservations.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-    
-    Reservation *currentReservation = [self.reservations objectAtIndexPath:indexPath];
-    cell.textLabel.text = [NSString stringWithFormat:@"Room %u: %@ %@", currentReservation.room.number, currentReservation.guest.firstName, currentReservation.guest.lastName];
+    cell.textLabel.numberOfLines = 2;
+    Reservation *currentReservation = [self.filteredReservations objectAtIndex:indexPath.row];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@, Room %u: \n%@ %@", currentReservation.room.hotel.name, currentReservation.room.number, currentReservation.guest.firstName, currentReservation.guest.lastName];
     
     return cell;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    id<NSFetchedResultsSectionInfo> sectionInfo = [self.reservations.sections objectAtIndex:section];
-    
-    return sectionInfo.name;
-}
 
-- (NSFetchedResultsController *)reservations {
-    if (!_reservations) {
+
+- (NSFetchedResultsController *)fetchedReservations {
+    if (!_fetchedReservations) {
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         
         NSFetchRequest *reservationRequest = [NSFetchRequest fetchRequestWithEntityName:@"Reservation"];
@@ -87,17 +83,18 @@
         
         NSError *reservationError;
         
-        _reservations = [[NSFetchedResultsController alloc] initWithFetchRequest:reservationRequest
+        _fetchedReservations = [[NSFetchedResultsController alloc] initWithFetchRequest:reservationRequest
                                                             managedObjectContext:appDelegate.persistentContainer.viewContext sectionNameKeyPath:@"room.hotel.name" cacheName:nil];
         
-        [_reservations performFetch:&reservationError];
+        [_fetchedReservations performFetch:&reservationError];
     }
     
-    return _reservations;
+    return _fetchedReservations;
 }
 
 - (void)setupSearchBar {
     self.searchBar = [[UISearchBar alloc] init];
+    self.searchBar.delegate = self;
     [self.view addSubview:self.searchBar];
     self.searchBar.translatesAutoresizingMaskIntoConstraints = NO;
 }
@@ -117,8 +114,33 @@
     [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-topLayoutHeight-[searchBar][tableView]|" options:0 metrics:metricsDictionary views:viewsDictionary]];
     
     [NSLayoutConstraint activateConstraints:constraints];
-    
-    
+}
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    [searchBar setShowsCancelButton:YES animated:YES];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    searchBar.text = @"";
+    [searchBar setShowsCancelButton:NO animated:YES];
+    [searchBar resignFirstResponder];
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    NSLog(@"search changed");
+    if ([searchText isEqual: @""]) {
+        self.filteredReservations = self.allReservations;
+    } else {
+    self.filteredReservations = [self.allReservations filteredArrayUsingPredicate:[self filterByFirstName:@"guest.firstName" andLastName:@"guest.lastName" usingSearchTerms:searchText]];
+    }
+    [self.tableView reloadData];
+}
+
+-(NSPredicate *)filterByFirstName:(NSString *)firstName
+                      andLastName:(NSString *)lastName
+                 usingSearchTerms:(NSString *)searchTerms{
+    return [NSPredicate predicateWithFormat:@"%K CONTAINS[cd] %@ || %K CONTAINS[cd] %@"
+                              argumentArray:@[firstName, searchTerms, lastName, searchTerms]];
 }
 
 @end
