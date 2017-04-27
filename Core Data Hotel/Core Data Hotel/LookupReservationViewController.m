@@ -7,7 +7,6 @@
 //
 
 #import "LookupReservationViewController.h"
-#import "AutoLayout.h"
 #import "AppDelegate.h"
 #import "Reservation+CoreDataClass.h"
 #import "Reservation+CoreDataProperties.h"
@@ -23,6 +22,7 @@
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) NSFetchedResultsController *reservations;
+@property (strong, nonatomic) UISearchBar *searchBar;
 
 @end
 
@@ -32,6 +32,8 @@
     [super loadView];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self setupTableView];
+    [self setupSearchBar];
+    [self setupSubviews];
 }
 
 - (void)setupTableView {
@@ -42,7 +44,6 @@
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    [AutoLayout fullScreenConstraintsWithVFLForView:self.tableView];
 }
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
@@ -93,6 +94,31 @@
     }
     
     return _reservations;
+}
+
+- (void)setupSearchBar {
+    self.searchBar = [[UISearchBar alloc] init];
+    [self.view addSubview:self.searchBar];
+    self.searchBar.translatesAutoresizingMaskIntoConstraints = NO;
+}
+
+- (void)setupSubviews {
+    NSMutableArray *constraints = [[NSMutableArray alloc] init];
+    
+    UIView *searchBar = self.searchBar;
+    UIView *tableView = self.tableView;
+    NSMutableDictionary *viewsDictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys: searchBar, @"searchBar", tableView, @"tableView", nil];
+    CGFloat height = CGRectGetHeight(self.navigationController.navigationBar.frame) + 20;
+    NSNumber *topLayoutHeight = [NSNumber numberWithFloat:(height)];
+    NSDictionary *metricsDictionary = @{@"topLayoutHeight": topLayoutHeight};
+    
+    [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[searchBar]|" options:0 metrics:nil views:viewsDictionary]];
+     [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]|" options:0 metrics:nil views:viewsDictionary]];
+    [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-topLayoutHeight-[searchBar][tableView]|" options:0 metrics:metricsDictionary views:viewsDictionary]];
+    
+    [NSLayoutConstraint activateConstraints:constraints];
+    
+    
 }
 
 @end

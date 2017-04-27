@@ -75,11 +75,12 @@
                                              toView:(UIView *)otherView
                                      withMultiplier:(CGFloat)multiplier {
     
-    NSLayoutConstraint *widthConstraint = [AutoLayout genericConstraintFrom:view
+    NSLayoutConstraint *constraint = [AutoLayout genericConstraintFrom:view
                                                                      toView:otherView
                                                               withAttribute:NSLayoutAttributeWidth
                                                               andMultiplier:multiplier];
-    return widthConstraint;
+    constraint.active = YES;
+    return constraint;
 }
 
 +(NSLayoutConstraint *)leadingConstraintFrom:(UIView *)view
@@ -118,5 +119,25 @@
     return constraint;
 }
 
++(NSLayoutConstraint *)constraintsWithVFL:(NSString *)vflString
+                                 andViews:(NSArray<UIView *> *)views {
+    return [AutoLayout constraintsWithVFL:vflString andViews:views usingMetrics:nil];
+}
+
++(NSLayoutConstraint *)constraintsWithVFL:(NSString *)vflString
+                                 andViews:(NSArray<UIView *> *)views
+                             usingMetrics:(NSDictionary *)metrics{
+    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(views);
+    
+    NSArray *constraints = [NSLayoutConstraint
+                                      constraintsWithVisualFormat:vflString
+                                      options:0
+                                      metrics:metrics
+                                      views:viewsDictionary];
+    
+    [NSLayoutConstraint activateConstraints:constraints];
+    
+    return constraints.copy;
+}
 
 @end
