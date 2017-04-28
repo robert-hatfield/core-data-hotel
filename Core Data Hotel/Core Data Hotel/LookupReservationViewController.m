@@ -89,15 +89,14 @@
 - (NSFetchedResultsController *)fetchedReservations {
     
     if (!_fetchedReservations) {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
         
         NSFetchRequest *reservationRequest = [NSFetchRequest fetchRequestWithEntityName:@"Reservation"];
         NSSortDescriptor *hotelDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"room.hotel.name" ascending:YES];
         NSSortDescriptor *numberDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"room.number" ascending:YES];
         NSArray *sortDescriptors = [NSArray arrayWithObjects:hotelDescriptor, numberDescriptor, nil];
-        
         reservationRequest.sortDescriptors = sortDescriptors;
-        
+
         NSError *reservationError;
         
         _fetchedReservations = [[NSFetchedResultsController alloc] initWithFetchRequest:reservationRequest
@@ -106,6 +105,9 @@
                                                                               cacheName:nil];
         
         [_fetchedReservations performFetch:&reservationError];
+        if (reservationError) {
+            NSLog(@"%@", reservationError.localizedDescription);
+        }
     }
     
     return _fetchedReservations;
