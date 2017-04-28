@@ -39,16 +39,27 @@
     [super tearDown];
 }
 
-- (void)testViewControllerNotNil {
-    XCTAssertNotNil(self.testController, @"The testController is nil.");
-}
-
 - (void)testGenericConstraintFromtoViewwithAttribute {
     
     id constraint = [AutoLayout genericConstraintFrom:self.testView1 toView:self.testView2 withAttribute:NSLayoutAttributeTop];
-    
+    NSLog(@"%@", (NSLayoutConstraint *)constraint);
     XCTAssert([constraint isKindOfClass:[NSLayoutConstraint class]], @"constraint is not an instance of NSLayoutConstraint.");
     XCTAssertTrue([(NSLayoutConstraint *)constraint isActive], @"constraint was not activated.");
 }
 
+- (void)testfullScreenConstraintsWithVFLForView {
+    id constraints = [AutoLayout fullScreenConstraintsWithVFLForView:self.testView1];
+    XCTAssert([constraints isKindOfClass:[NSArray class]], @"Result was not an instance of NSArray.");
+    NSArray *constraintsArray = (NSArray*)constraints;
+    XCTAssert(constraintsArray.count == 4, @"array does not have four constraints");
+    for (id constraint in constraints) {
+        XCTAssert([constraint isKindOfClass:[NSLayoutConstraint class]], @"Element of array is not an NSLayoutConstraint");
+        XCTAssertTrue([(NSLayoutConstraint *)constraint isActive], @"constraint was not activated.");
+    }
+    
+}
+
+- (void)testConstraintsWithVFLandViewsusingMetrics {
+    
+}
 @end
