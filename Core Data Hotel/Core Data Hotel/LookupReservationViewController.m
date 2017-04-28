@@ -7,6 +7,7 @@
 //
 
 #import "LookupReservationViewController.h"
+#import "AutoLayout.h"
 #import "AppDelegate.h"
 #import "Reservation+CoreDataClass.h"
 #import "Reservation+CoreDataProperties.h"
@@ -33,9 +34,7 @@
 - (void)loadView {
     [super loadView];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    [self setupTableView];
-    [self setupSearchBar];
-    [self setupSubviews];
+    [self setupViews];
 }
 
 - (void)viewDidLoad {
@@ -45,14 +44,28 @@
     self.filteredReservations = self.allReservations;
 }
 
-- (void)setupTableView {
+- (void)setupViews {
+    self.definesPresentationContext = YES;
+    self.searchBar = [[UISearchBar alloc] init];
     self.tableView = [[UITableView alloc] init];
+    [self.view addSubview:self.searchBar];
     [self.view addSubview:self.tableView];
-    
-    
-    
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
+    self.searchBar.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.searchBar.delegate = self;
+    self.searchBar.placeholder = @"Search for guest";
+    
+    [AutoLayout leadingConstraintFrom:self.searchBar toView:self.view];
+    [AutoLayout trailingConstraintFrom:self.searchBar toView:self.view];
+    [AutoLayout fullScreenConstraintsWithVFLForView:self.tableView];
+    
+    self.tableView.tableHeaderView = self.searchBar;
+    [self.tableView layoutIfNeeded];
+    [self.tableView setKeyboardDismissMode:UIScrollViewKeyboardDismissModeOnDrag];
+    [self.searchBar setAutocapitalizationType:UITextAutocapitalizationTypeWords];
+    [self.searchBar setAutocorrectionType:UITextAutocorrectionTypeNo];
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -60,17 +73,21 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     cell.textLabel.numberOfLines = 2;
     Reservation *currentReservation = [self.filteredReservations objectAtIndex:indexPath.row];
-    cell.textLabel.text = [NSString stringWithFormat:@"%@, Room %u: \n%@ %@", currentReservation.room.hotel.name, currentReservation.room.number, currentReservation.guest.firstName, currentReservation.guest.lastName];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@, Room %u: \n%@ %@",
+                           currentReservation.room.hotel.name,
+                           currentReservation.room.number,
+                           currentReservation.guest.firstName,
+                           currentReservation.guest.lastName];
     
     return cell;
 }
 
-
-
 - (NSFetchedResultsController *)fetchedReservations {
+    
     if (!_fetchedReservations) {
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         
@@ -84,7 +101,9 @@
         NSError *reservationError;
         
         _fetchedReservations = [[NSFetchedResultsController alloc] initWithFetchRequest:reservationRequest
-                                                            managedObjectContext:appDelegate.persistentContainer.viewContext sectionNameKeyPath:@"room.hotel.name" cacheName:nil];
+                                                                   managedObjectContext:appDelegate.persistentContainer.viewContext
+                                                                     sectionNameKeyPath:@"room.hotel.name"
+                                                                              cacheName:nil];
         
         [_fetchedReservations performFetch:&reservationError];
     }
@@ -92,46 +111,32 @@
     return _fetchedReservations;
 }
 
-- (void)setupSearchBar {
-    self.searchBar = [[UISearchBar alloc] init];
-    self.searchBar.delegate = self;
-    [self.view addSubview:self.searchBar];
-    self.searchBar.translatesAutoresizingMaskIntoConstraints = NO;
-}
-
-- (void)setupSubviews {
-    NSMutableArray *constraints = [[NSMutableArray alloc] init];
-    
-    UIView *searchBar = self.searchBar;
-    UIView *tableView = self.tableView;
-    NSMutableDictionary *viewsDictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys: searchBar, @"searchBar", tableView, @"tableView", nil];
-    CGFloat height = CGRectGetHeight(self.navigationController.navigationBar.frame) + 20;
-    NSNumber *topLayoutHeight = [NSNumber numberWithFloat:(height)];
-    NSDictionary *metricsDictionary = @{@"topLayoutHeight": topLayoutHeight};
-    
-    [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[searchBar]|" options:0 metrics:nil views:viewsDictionary]];
-     [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]|" options:0 metrics:nil views:viewsDictionary]];
-    [constraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-topLayoutHeight-[searchBar][tableView]|" options:0 metrics:metricsDictionary views:viewsDictionary]];
-    
-    [NSLayoutConstraint activateConstraints:constraints];
-}
-
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [searchBar setShowsCancelButton:YES animated:YES];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [searchBar resignFirstResponder];
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     searchBar.text = @"";
     [searchBar setShowsCancelButton:NO animated:YES];
     [searchBar resignFirstResponder];
+    [self updateResultsWith:searchBar.text];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    NSLog(@"search changed");
+    [self updateResultsWith:searchText];
+}
+
+- (void) updateResultsWith:(NSString *)searchText {
     if ([searchText isEqual: @""]) {
         self.filteredReservations = self.allReservations;
     } else {
-    self.filteredReservations = [self.allReservations filteredArrayUsingPredicate:[self filterByFirstName:@"guest.firstName" andLastName:@"guest.lastName" usingSearchTerms:searchText]];
+        self.filteredReservations = [self.allReservations filteredArrayUsingPredicate:[self filterByFirstName:@"guest.firstName"
+                                                                                                  andLastName:@"guest.lastName"
+                                                                                             usingSearchTerms:searchText]];
     }
     [self.tableView reloadData];
 }
