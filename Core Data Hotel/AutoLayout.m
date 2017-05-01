@@ -119,25 +119,4 @@
     return constraint;
 }
 
-+(NSLayoutConstraint *)constraintsWithVFL:(NSString *)vflString
-                                 andViews:(NSArray<UIView *> *)views {
-    return [AutoLayout constraintsWithVFL:vflString andViews:views usingMetrics:nil];
-}
-
-+(NSLayoutConstraint *)constraintsWithVFL:(NSString *)vflString
-                                 andViews:(NSArray<UIView *> *)views
-                             usingMetrics:(NSDictionary *)metrics{
-    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(views);
-    
-    NSArray *constraints = [NSLayoutConstraint
-                                      constraintsWithVisualFormat:vflString
-                                      options:0
-                                      metrics:metrics
-                                      views:viewsDictionary];
-    
-    [NSLayoutConstraint activateConstraints:constraints];
-    
-    return constraints.copy;
-}
-
 @end

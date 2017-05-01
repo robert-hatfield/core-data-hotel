@@ -47,19 +47,19 @@
     XCTAssertTrue([(NSLayoutConstraint *)constraint isActive], @"constraint was not activated.");
 }
 
-- (void)testfullScreenConstraintsWithVFLForView {
+- (void)testFullScreenConstraintsWithVFLForView {
     id constraints = [AutoLayout fullScreenConstraintsWithVFLForView:self.testView1];
+    
     XCTAssert([constraints isKindOfClass:[NSArray class]], @"Result was not an instance of NSArray.");
+    
     NSArray *constraintsArray = (NSArray*)constraints;
     XCTAssert(constraintsArray.count == 4, @"array does not have four constraints");
+    
     for (id constraint in constraints) {
         XCTAssert([constraint isKindOfClass:[NSLayoutConstraint class]], @"Element of array is not an NSLayoutConstraint");
         XCTAssertTrue([(NSLayoutConstraint *)constraint isActive], @"constraint was not activated.");
     }
-    
+
 }
 
-- (void)testConstraintsWithVFLandViewsusingMetrics {
-    
-}
 @end

@@ -136,9 +136,10 @@
     if ([searchText isEqual: @""]) {
         self.filteredReservations = self.allReservations;
     } else {
-        self.filteredReservations = [self.allReservations filteredArrayUsingPredicate:[self filterByFirstName:@"guest.firstName"
-                                                                                                  andLastName:@"guest.lastName"
-                                                                                             usingSearchTerms:searchText]];
+        self.filteredReservations = [self.allReservations filteredArrayUsingPredicate:
+                                     [self filterByFirstName:@"guest.firstName"
+                                                 andLastName:@"guest.lastName"
+                                            usingSearchTerms:searchText]];
     }
     [self.tableView reloadData];
 }
