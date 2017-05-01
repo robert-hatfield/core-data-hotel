@@ -40,14 +40,13 @@
                                withAttribute:(NSLayoutAttribute)attribute
                                andMultiplier:(CGFloat)multiplier {
     
-    NSLayoutConstraint *constraint = [NSLayoutConstraint
-                                      constraintWithItem:view
-                                      attribute:attribute
-                                      relatedBy:NSLayoutRelationEqual
-                                      toItem:superView
-                                      attribute:attribute
-                                      multiplier:multiplier
-                                      constant:0.0];
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view
+                                                                  attribute:attribute
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:superView
+                                                                  attribute:attribute
+                                                                 multiplier:multiplier
+                                                                   constant:0.0];
     constraint.active = YES;
     return constraint;
 }
@@ -56,7 +55,10 @@
                                       toView:(UIView *)superView
                                withAttribute:(NSLayoutAttribute)attribute {
     
-    return [AutoLayout genericConstraintFrom:view toView:superView withAttribute:attribute andMultiplier:1.0];
+    return [AutoLayout genericConstraintFrom:view
+                                      toView:superView
+                               withAttribute:attribute
+                               andMultiplier:1.0];
 }
 
 +(NSLayoutConstraint *)equalHeightConstraintFromView:(UIView *)view
@@ -86,13 +88,18 @@
 +(NSLayoutConstraint *)leadingConstraintFrom:(UIView *)view
                                       toView:(UIView *)otherView{
     
-    return [AutoLayout genericConstraintFrom:view toView:otherView withAttribute:NSLayoutAttributeLeading];
+    return [AutoLayout genericConstraintFrom:view
+                                      toView:otherView
+                               withAttribute:NSLayoutAttributeLeading];
     
 }
 
 +(NSLayoutConstraint *)trailingConstraintFrom:(UIView *)view
                                        toView:(UIView *)otherView{
-    return [AutoLayout genericConstraintFrom:view toView:otherView withAttribute:NSLayoutAttributeTrailing];
+    
+    return [AutoLayout genericConstraintFrom:view
+                                      toView:otherView
+                               withAttribute:NSLayoutAttributeTrailing];
 }
 
 +(NSLayoutConstraint *)topConstraintFrom:(UIView *)view
@@ -103,41 +110,38 @@
 }
 
 + (NSLayoutConstraint *)height:(CGFloat)height forView:(UIView *)view {
-    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:height];
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view
+                                                                  attribute:NSLayoutAttributeHeight
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:nil
+                                                                  attribute:NSLayoutAttributeNotAnAttribute
+                                                                 multiplier:1.0
+                                                                   constant:height];
     constraint.active = YES;
     return constraint;
 }
 + (NSLayoutConstraint *)width:(CGFloat)width forView:(UIView *)view {
-    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:width];
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view
+                                                                  attribute:NSLayoutAttributeWidth
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:nil
+                                                                  attribute:NSLayoutAttributeNotAnAttribute
+                                                                 multiplier:1.0
+                                                                   constant:width];
     constraint.active = YES;
     return constraint;
 }
 
 + (NSLayoutConstraint *)topConstraintFrom:(UIView *)view toView:(UIView *)otherView withOffset:(CGFloat)offset {
-    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:otherView attribute:NSLayoutAttributeTop multiplier:1.0 constant:offset];
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:view
+                                                                  attribute:NSLayoutAttributeTop
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:otherView
+                                                                  attribute:NSLayoutAttributeTop
+                                                                 multiplier:1.0
+                                                                   constant:offset];
     constraint.active = YES;
     return constraint;
-}
-
-+(NSLayoutConstraint *)constraintsWithVFL:(NSString *)vflString
-                                 andViews:(NSArray<UIView *> *)views {
-    return [AutoLayout constraintsWithVFL:vflString andViews:views usingMetrics:nil];
-}
-
-+(NSLayoutConstraint *)constraintsWithVFL:(NSString *)vflString
-                                 andViews:(NSArray<UIView *> *)views
-                             usingMetrics:(NSDictionary *)metrics{
-    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(views);
-    
-    NSArray *constraints = [NSLayoutConstraint
-                                      constraintsWithVisualFormat:vflString
-                                      options:0
-                                      metrics:metrics
-                                      views:viewsDictionary];
-    
-    [NSLayoutConstraint activateConstraints:constraints];
-    
-    return constraints.copy;
 }
 
 @end

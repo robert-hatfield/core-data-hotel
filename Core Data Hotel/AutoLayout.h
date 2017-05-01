@@ -21,13 +21,6 @@
 
 +(NSArray *)fullScreenConstraintsWithVFLForView:(UIView *)view;
 
-+(NSLayoutConstraint *)constraintsWithVFL:(NSString *)vflString
-                                           andViews:(NSArray<UIView *> *)views;
-
-+(NSLayoutConstraint *)constraintsWithVFL:(NSString *)vflString
-                                 andViews:(NSArray<UIView *> *)views
-                             usingMetrics:(NSDictionary *)metrics;
-
 +(NSLayoutConstraint *)equalHeightConstraintFromView:(UIView *)view
                                               toView:(UIView *)otherView
                                       withMultiplier:(CGFloat)multiplier;
