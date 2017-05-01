@@ -87,7 +87,7 @@
 }
 
 - (void)bookReservation {
-    NSLog(@"Reservation requested for room %ul at %@...", self.room.number, self.room.hotel.name);
+    NSLog(@"Reservation requested for room %u at %@...", self.room.number, self.room.hotel.name);
     NSLog(@"Name: %@ %@", self.firstNameField.text, self.lastNameField.text);
     NSLog(@"Email: %@", self.emailField.text);
     
