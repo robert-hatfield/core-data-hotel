@@ -39,11 +39,13 @@
     [super tearDown];
 }
 
-- (void)testGenericConstraintFromtoViewwithAttribute {
+- (void)testGenericConstraintFromToViewWithAttribute {
     
     id constraint = [AutoLayout genericConstraintFrom:self.testView1 toView:self.testView2 withAttribute:NSLayoutAttributeTop];
     NSLog(@"%@", (NSLayoutConstraint *)constraint);
+    
     XCTAssert([constraint isKindOfClass:[NSLayoutConstraint class]], @"constraint is not an instance of NSLayoutConstraint.");
+    
     XCTAssertTrue([(NSLayoutConstraint *)constraint isActive], @"constraint was not activated.");
 }
 
@@ -57,9 +59,43 @@
     
     for (id constraint in constraints) {
         XCTAssert([constraint isKindOfClass:[NSLayoutConstraint class]], @"Element of array is not an NSLayoutConstraint");
+        
         XCTAssertTrue([(NSLayoutConstraint *)constraint isActive], @"constraint was not activated.");
     }
 
+}
+
+- (void)testLeadingConstraintFromViewToView {
+    id constraint = [AutoLayout leadingConstraintFrom:self.testView1 toView:self.testView2];
+    
+    XCTAssertTrue([constraint isKindOfClass:[NSLayoutConstraint class]], @"Result was not an instance of NSLayoutConstraint");
+    
+    NSLayoutConstraint *typecastConstraint = (NSLayoutConstraint*)constraint;
+    
+    XCTAssertTrue((typecastConstraint.firstAttribute == NSLayoutAttributeLeading && typecastConstraint.secondAttribute == NSLayoutAttributeLeading), @"Constraint attribute was not set to leading.");
+}
+
+- (void)testTrailingConstraintFromToView {
+    id constraint = [AutoLayout trailingConstraintFrom:self.testView1 toView:self.testView2];
+    
+    XCTAssertTrue([constraint isKindOfClass:[NSLayoutConstraint class]], @"Result was not an instance of NSLayoutConstraint");
+    
+    NSLayoutConstraint *typecastConstraint = (NSLayoutConstraint*)constraint;
+    
+    XCTAssertTrue((typecastConstraint.firstAttribute == NSLayoutAttributeTrailing && typecastConstraint.secondAttribute == NSLayoutAttributeTrailing), @"Constraint attribute was not set to trailing.");
+}
+
+- (void)testTopConstraintFromToViewWithOffset {
+    CGFloat testCGFloat = 10.0;
+    id constraint = [AutoLayout topConstraintFrom:self.testView1
+                                           toView:self.testView2
+                                       withOffset:testCGFloat];
+    
+    XCTAssertTrue([constraint isKindOfClass:[NSLayoutConstraint class]], @"Result was not an instance of NSLayoutConstraint.");
+    
+    NSLayoutConstraint *typecastConstraint = (NSLayoutConstraint*)constraint;
+    
+    XCTAssertTrue((typecastConstraint.constant == testCGFloat), @"Constant on output was not equal to input.");
 }
 
 @end
