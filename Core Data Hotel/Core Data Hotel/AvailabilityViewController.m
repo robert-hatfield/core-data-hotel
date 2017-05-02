@@ -8,14 +8,8 @@
 
 #import "AvailabilityViewController.h"
 #import "AutoLayout.h"
-#import "AppDelegate.h"
 #import "BookViewController.h"
-#import "Reservation+CoreDataClass.h"
-#import "Reservation+CoreDataProperties.h"
-#import "Room+CoreDataClass.h"
-#import "Room+CoreDataProperties.h"
-#import "Hotel+CoreDataClass.h"
-#import "Hotel+CoreDataProperties.h"
+#import "HotelService.h"
 
 @interface AvailabilityViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -28,39 +22,7 @@
 
 - (NSFetchedResultsController *)availableRooms {
     if (!_availableRooms) {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
-        
-        NSFetchRequest *reservationRequest = [NSFetchRequest fetchRequestWithEntityName:@"Reservation"];
-        reservationRequest.predicate = [NSPredicate predicateWithFormat:@"startDate <= %@ AND endDate >= %@", self.endDate, [NSDate date]];
-        
-        NSError *reservationError;
-        NSArray *results = [appDelegate.persistentContainer.viewContext executeFetchRequest:reservationRequest error:&reservationError];
-        
-        NSMutableArray *unavailableRooms = [[NSMutableArray alloc] init];
-        
-        for (Reservation *reservation in results) {
-            [unavailableRooms addObject:reservation.room];
-        }
-        
-        
-        NSFetchRequest *roomRequest = [NSFetchRequest fetchRequestWithEntityName:@"Room"];
-        roomRequest.predicate = [NSPredicate predicateWithFormat:@"NOT self IN %@", unavailableRooms];
-
-        // Create sort descriptors. The first descriptor will be used for creating sections in the table view.
-        NSSortDescriptor *hotelDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"hotel.name" ascending:YES];
-        NSSortDescriptor *numberDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"number" ascending:YES];
-        NSArray *sortDescriptors = [NSArray arrayWithObjects:hotelDescriptor, numberDescriptor, nil];
-        
-        roomRequest.sortDescriptors = sortDescriptors;
-        
-        NSError *roomError;
-        
-        // Assign NSFetchedResultsController to _availableRooms
-        _availableRooms = [[NSFetchedResultsController alloc] initWithFetchRequest:roomRequest
-                                                              managedObjectContext:appDelegate.persistentContainer.viewContext
-                                                                sectionNameKeyPath:@"hotel.name" cacheName:nil];
-        
-        [_availableRooms performFetch:&roomError];
+        _availableRooms = [HotelService getResultsControllerWithEndDate:self.endDate];
     }
     
     return _availableRooms;
