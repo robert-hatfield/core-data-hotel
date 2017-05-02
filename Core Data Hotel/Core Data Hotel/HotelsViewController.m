@@ -7,11 +7,10 @@
 //
 
 #import "HotelsViewController.h"
-#import "AppDelegate.h"
-#import "RoomsViewController.h"
-
+#import "CoreDataStack.h"
 #import "Hotel+CoreDataClass.h"
 #import "Hotel+CoreDataProperties.h"
+#import "RoomsViewController.h"
 
 @interface HotelsViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -42,15 +41,14 @@
 }
 
 -(NSArray *)allHotels {
-    if (!_allHotels) {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        
-        NSManagedObjectContext *context = appDelegate.persistentContainer.viewContext;
+    if (!_allHotels) {        
+        NSManagedObjectContext *context = [[[CoreDataStack shared] persistentContainer] viewContext];
         
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Hotel"];
         
         NSError *fetchError;
-        NSArray *hotels = [context executeFetchRequest:request error:&fetchError];
+        NSArray *hotels = [context executeFetchRequest:request
+                                                 error:&fetchError];
         
         if (fetchError) {
             NSLog(@"An error occurred while fetching hotels from Core Data.");
@@ -68,7 +66,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"
+                                                            forIndexPath:indexPath];
     int index = (int)indexPath.row;
     Hotel *hotel = [[self allHotels] objectAtIndex:index];
     cell.textLabel.text = hotel.name;

@@ -8,7 +8,7 @@
 
 #import "LookupReservationViewController.h"
 #import "AutoLayout.h"
-#import "AppDelegate.h"
+#import "CoreDataStack.h"
 #import "Reservation+CoreDataClass.h"
 #import "Reservation+CoreDataProperties.h"
 #import "Room+CoreDataClass.h"
@@ -74,7 +74,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"
+                                                            forIndexPath:indexPath];
     cell.textLabel.numberOfLines = 2;
     Reservation *currentReservation = [self.filteredReservations objectAtIndex:indexPath.row];
     cell.textLabel.text = [NSString stringWithFormat:@"%@, Room %u: \n%@ %@",
@@ -89,18 +90,20 @@
 - (NSFetchedResultsController *)fetchedReservations {
     
     if (!_fetchedReservations) {
-        AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+//        AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
         
         NSFetchRequest *reservationRequest = [NSFetchRequest fetchRequestWithEntityName:@"Reservation"];
-        NSSortDescriptor *hotelDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"room.hotel.name" ascending:YES];
-        NSSortDescriptor *numberDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"room.number" ascending:YES];
+        NSSortDescriptor *hotelDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"room.hotel.name"
+                                                                          ascending:YES];
+        NSSortDescriptor *numberDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"room.number"
+                                                                           ascending:YES];
         NSArray *sortDescriptors = [NSArray arrayWithObjects:hotelDescriptor, numberDescriptor, nil];
         reservationRequest.sortDescriptors = sortDescriptors;
 
         NSError *reservationError;
         
         _fetchedReservations = [[NSFetchedResultsController alloc] initWithFetchRequest:reservationRequest
-                                                                   managedObjectContext:appDelegate.persistentContainer.viewContext
+                                                                   managedObjectContext:CoreDataStack.shared.persistentContainer.viewContext
                                                                      sectionNameKeyPath:@"room.hotel.name"
                                                                               cacheName:nil];
         

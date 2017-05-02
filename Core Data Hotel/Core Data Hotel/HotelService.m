@@ -8,8 +8,7 @@
 
 #import "HotelService.h"
 @import Crashlytics;
-
-#import "AppDelegate.h"
+#import "CoreDataStack.h"
 #import "Guest+CoreDataClass.h"
 #import "Guest+CoreDataProperties.h"
 #import "Reservation+CoreDataClass.h"
@@ -19,40 +18,49 @@
 
 @implementation HotelService
 
-+ (BOOL)bookReservationForRoom:(Room *)room starting:(NSDate *)startDate andEnding:(NSDate *)endDate forFirstName:(NSString *)firstName lastName:(NSString *)lastName withEmailAddress:(NSString *)email {
++ (BOOL)bookReservationForRoom:(Room *)room
+                      starting:(NSDate *)startDate
+                     andEnding:(NSDate *)endDate
+                  forFirstName:(NSString *)firstName
+                      lastName:(NSString *)lastName
+              withEmailAddress:(NSString *)email {
     
     NSLog(@"Reservation requested for room %u at %@...", room.number, room.hotel.name);
     NSLog(@"Name: %@ %@", firstName, lastName);
     NSLog(@"Email: %@", email);
+        
+    NSManagedObjectContext *context = [[[CoreDataStack shared] persistentContainer] viewContext];
     
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
-    
-    Guest *newGuest = [NSEntityDescription insertNewObjectForEntityForName:@"Guest" inManagedObjectContext:appDelegate.persistentContainer.viewContext];
+    Guest *newGuest = [NSEntityDescription insertNewObjectForEntityForName:@"Guest"
+                                                    inManagedObjectContext:context];
     newGuest.firstName = firstName;
     newGuest.lastName = lastName;
     newGuest.email = email;
     
-    Reservation *newReservation = [NSEntityDescription insertNewObjectForEntityForName:@"Reservation" inManagedObjectContext:appDelegate.persistentContainer.viewContext];
+    Reservation *newReservation = [NSEntityDescription insertNewObjectForEntityForName:@"Reservation"
+                                                                inManagedObjectContext:context];
     newReservation.room = room;
     newReservation.startDate = startDate;
     newReservation.endDate = endDate;
     newReservation.guest = newGuest;
     
     NSError *saveError;
-    [appDelegate.persistentContainer.viewContext save:&saveError];
+    [context save:&saveError];
     if (saveError) {
         
         NSLog(@"An error occurred when saving reservation to Core Data.");
         
         NSDictionary *attributesDictionary = @{@"Save Error" : saveError.localizedDescription};
-        [Answers logCustomEventWithName:@"BookViewController - Save Error" customAttributes:attributesDictionary];
+        [Answers logCustomEventWithName:@"BookViewController - Save Error"
+                       customAttributes:attributesDictionary];
         return NO;
         
     } else {
         
         NSLog(@"New reservation successfully saved to Core Data.");
         NSDictionary *attributesDictionary = @{@"Hotel" : room.hotel.name};
-        [Answers logCustomEventWithName:@"Reservation booked" customAttributes:attributesDictionary];
+        [Answers logCustomEventWithName:@"Reservation booked"
+                       customAttributes:attributesDictionary];
         return YES;
         
     }
@@ -60,14 +68,14 @@
 }
 
 + (NSFetchedResultsController *)getResultsControllerWithEndDate:(NSDate *)endDate {
-    
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+    NSManagedObjectContext *context = [[[CoreDataStack shared] persistentContainer] viewContext];
     
     NSFetchRequest *reservationRequest = [NSFetchRequest fetchRequestWithEntityName:@"Reservation"];
     reservationRequest.predicate = [NSPredicate predicateWithFormat:@"startDate <= %@ AND endDate >= %@", endDate, [NSDate date]];
     
     NSError *reservationError;
-    NSArray *results = [appDelegate.persistentContainer.viewContext executeFetchRequest:reservationRequest error:&reservationError];
+    NSArray *results = [context executeFetchRequest:reservationRequest
+                                              error:&reservationError];
     
     NSMutableArray *unavailableRooms = [[NSMutableArray alloc] init];
     
@@ -89,7 +97,7 @@
     
     // Assign NSFetchedResultsController to _availableRooms
     NSFetchedResultsController *controller = [[NSFetchedResultsController alloc] initWithFetchRequest:roomRequest
-                                                          managedObjectContext:appDelegate.persistentContainer.viewContext
+                                                          managedObjectContext:context
                                                             sectionNameKeyPath:@"hotel.name" cacheName:nil];
      [controller performFetch:&roomError];
     

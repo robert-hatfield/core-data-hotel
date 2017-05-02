@@ -17,6 +17,8 @@
 		62744D101EAFCFA7005DE24D /* AvailabilityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62744D0F1EAFCFA7005DE24D /* AvailabilityViewController.m */; };
 		62744D131EB0147F005DE24D /* BookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62744D121EB0147F005DE24D /* BookViewController.m */; };
 		629059C41EB8010700203751 /* HotelService.m in Sources */ = {isa = PBXBuildFile; fileRef = 629059C31EB8010700203751 /* HotelService.m */; };
+		629059C61EB81D1200203751 /* HotelServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 629059C51EB81D1200203751 /* HotelServiceTest.m */; };
+		629059C91EB81F8500203751 /* CoreDataStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 629059C81EB81F8500203751 /* CoreDataStack.m */; };
 		62C001131EAECB0D0039DE27 /* RoomsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62C001121EAECB0D0039DE27 /* RoomsViewController.m */; };
 		62C9CAB11EAE6D23008BB071 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 62C9CAB01EAE6D23008BB071 /* main.m */; };
 		62C9CAB41EAE6D23008BB071 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 62C9CAB31EAE6D23008BB071 /* AppDelegate.m */; };
@@ -58,6 +60,9 @@
 		62744D121EB0147F005DE24D /* BookViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookViewController.m; sourceTree = "<group>"; };
 		629059C21EB8010700203751 /* HotelService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HotelService.h; sourceTree = "<group>"; };
 		629059C31EB8010700203751 /* HotelService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HotelService.m; sourceTree = "<group>"; };
+		629059C51EB81D1200203751 /* HotelServiceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HotelServiceTest.m; sourceTree = "<group>"; };
+		629059C71EB81F8500203751 /* CoreDataStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataStack.h; sourceTree = "<group>"; };
+		629059C81EB81F8500203751 /* CoreDataStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataStack.m; sourceTree = "<group>"; };
 		62C001111EAECB0D0039DE27 /* RoomsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomsViewController.h; sourceTree = "<group>"; };
 		62C001121EAECB0D0039DE27 /* RoomsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomsViewController.m; sourceTree = "<group>"; };
 		62C9CAAC1EAE6D23008BB071 /* Core Data Hotel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Core Data Hotel.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				625120941EB1146600E7B45C /* AutoLayoutTest.m */,
+				629059C51EB81D1200203751 /* HotelServiceTest.m */,
 				6251208C1EB111CB00E7B45C /* Core_Data_HotelTests.m */,
 				6251208E1EB111CB00E7B45C /* Info.plist */,
 			);
@@ -174,6 +180,8 @@
 		62C9CACD1EAE6E44008BB071 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				629059C71EB81F8500203751 /* CoreDataStack.h */,
+				629059C81EB81F8500203751 /* CoreDataStack.m */,
 				62C9CAC91EAE6D5E008BB071 /* AutoLayout.h */,
 				629059C21EB8010700203751 /* HotelService.h */,
 				629059C31EB8010700203751 /* HotelService.m */,
@@ -315,6 +323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				625120951EB1146600E7B45C /* AutoLayoutTest.m in Sources */,
+				629059C61EB81D1200203751 /* HotelServiceTest.m in Sources */,
 				6251208D1EB111CB00E7B45C /* Core_Data_HotelTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -332,6 +341,7 @@
 				62744D101EAFCFA7005DE24D /* AvailabilityViewController.m in Sources */,
 				62744D131EB0147F005DE24D /* BookViewController.m in Sources */,
 				62C9CAD31EAEA485008BB071 /* HotelsViewController.m in Sources */,
+				629059C91EB81F8500203751 /* CoreDataStack.m in Sources */,
 				62C001131EAECB0D0039DE27 /* RoomsViewController.m in Sources */,
 				625120AA1EB261B500E7B45C /* MappingModel1.0-1.0.1.xcmappingmodel in Sources */,
 				62C9CAB11EAE6D23008BB071 /* main.m in Sources */,
