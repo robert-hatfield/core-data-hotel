@@ -7,11 +7,15 @@
 //
 
 #import "AppDelegate.h"
+
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
+
 #import "ViewController.h"
+#import "CoreDataStack.h"
 
 #import "Hotel+CoreDataClass.h"
 #import "Hotel+CoreDataProperties.h"
-
 #import "Room+CoreDataClass.h"
 #import "Room+CoreDataProperties.h"
 
@@ -27,7 +31,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    
+    [Fabric with:@[[Crashlytics class]]];
+
     [self setupRootViewController];
     [self bootstrapApp];
     return YES;
@@ -36,9 +41,11 @@
 -(void)bootstrapApp {
     // Seed CoreData with contents of JSON file if no CoreData store is available.
     
+    
+    NSManagedObjectContext *context = [[[CoreDataStack shared] persistentContainer] viewContext];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Hotel"];
     NSError *error;
-    NSInteger count = [self.persistentContainer.viewContext countForFetchRequest:request error:&error];
+    NSInteger count = [context countForFetchRequest:request error:&error];
     
     if (error) {
         NSLog(@"%@", error.localizedDescription);
@@ -66,7 +73,7 @@
         for (NSDictionary *hotel in hotels) {
             Hotel *newHotel = [NSEntityDescription
                                insertNewObjectForEntityForName:@"Hotel"
-                               inManagedObjectContext:self.persistentContainer.viewContext];
+                               inManagedObjectContext:context];
             
             newHotel.name = hotel[@"name"];
             newHotel.location = hotel[@"location"];
@@ -75,18 +82,18 @@
             for (NSDictionary *room in hotel[@"rooms"]) {
                 Room *newRoom = [NSEntityDescription
                                  insertNewObjectForEntityForName:@"Room"
-                                 inManagedObjectContext:self.persistentContainer.viewContext];
+                                 inManagedObjectContext:context];
                 
                 newRoom.number = [(NSNumber *)room[@"number"] intValue];
                 newRoom.beds = [(NSNumber *)room[@"beds"] intValue];
-                newRoom.rate = [(NSNumber *)room[@"rate"] floatValue];
+                newRoom.cost = [(NSNumber *)room[@"cost"] floatValue];
                 
                 newRoom.hotel = newHotel;
             }
         }
         
         NSError *saveError;
-        [self.persistentContainer.viewContext save:&saveError];
+        [context save:&saveError];
         
         if (saveError) {
             NSLog(@"There was an error when saving to Core Data.");
@@ -129,53 +136,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
-    [self saveContext];
-}
-
-
-#pragma mark - Core Data stack
-
-@synthesize persistentContainer = _persistentContainer;
-
-- (NSPersistentContainer *)persistentContainer {
-    // The persistent container for the application. This implementation creates and returns a container, having loaded the store for the application to it.
-    @synchronized (self) {
-        if (_persistentContainer == nil) {
-            _persistentContainer = [[NSPersistentContainer alloc] initWithName:@"Core_Data_Hotel"];
-            [_persistentContainer loadPersistentStoresWithCompletionHandler:^(NSPersistentStoreDescription *storeDescription, NSError *error) {
-                if (error != nil) {
-                    // Replace this implementation with code to handle the error appropriately.
-                    // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                    
-                    /*
-                     Typical reasons for an error here include:
-                     * The parent directory does not exist, cannot be created, or disallows writing.
-                     * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                     * The device is out of space.
-                     * The store could not be migrated to the current model version.
-                     Check the error message to determine what the actual problem was.
-                    */
-                    NSLog(@"Unresolved error %@, %@", error, error.userInfo);
-                    abort();
-                }
-            }];
-        }
-    }
-    
-    return _persistentContainer;
-}
-
-#pragma mark - Core Data Saving support
-
-- (void)saveContext {
-    NSManagedObjectContext *context = self.persistentContainer.viewContext;
-    NSError *error = nil;
-    if ([context hasChanges] && ![context save:&error]) {
-        // Replace this implementation with code to handle the error appropriately.
-        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-        NSLog(@"Unresolved error %@, %@", error, error.userInfo);
-        abort();
-    }
+    [CoreDataStack.shared saveContext];
 }
 
 @end
