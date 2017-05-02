@@ -10,13 +10,7 @@
 @import Crashlytics;
 
 #import "AutoLayout.h"
-#import "AppDelegate.h"
-#import "Room+CoreDataClass.h"
-#import "Room+CoreDataProperties.h"
-#import "Guest+CoreDataClass.h"
-#import "Guest+CoreDataProperties.h"
-#import "Hotel+CoreDataClass.h"
-#import "Hotel+CoreDataProperties.h"
+#import "HotelService.h"
 
 @interface BookViewController () <UITextFieldDelegate>
 
@@ -89,38 +83,18 @@
 }
 
 - (void)bookReservation {
-    NSLog(@"Reservation requested for room %u at %@...", self.room.number, self.room.hotel.name);
-    NSLog(@"Name: %@ %@", self.firstNameField.text, self.lastNameField.text);
-    NSLog(@"Email: %@", self.emailField.text);
+    BOOL reservationBookedSuccessfully = [HotelService bookReservationForRoom:self.room
+                                starting:self.startDate
+                               andEnding:self.endDate
+                            forFirstName:self.firstNameField.text
+                                lastName:self.lastNameField.text
+                        withEmailAddress:self.lastNameField.text];
     
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
-    
-    Guest *newGuest = [NSEntityDescription insertNewObjectForEntityForName:@"Guest" inManagedObjectContext:appDelegate.persistentContainer.viewContext];
-    newGuest.firstName = self.firstNameField.text;
-    newGuest.lastName = self.lastNameField.text;
-    newGuest.email = self.emailField.text;
-    
-    Reservation *newReservation = [NSEntityDescription insertNewObjectForEntityForName:@"Reservation" inManagedObjectContext:appDelegate.persistentContainer.viewContext];
-    newReservation.room = self.room;
-    newReservation.startDate = self.startDate;
-    newReservation.endDate = self.endDate;
-    newReservation.guest = newGuest;
-    
-    NSError *saveError;
-    [appDelegate.persistentContainer.viewContext save:&saveError];
-    if (saveError) {
-        NSLog(@"An error occurred when saving reservation to Core Data.");
-        
-        NSDictionary *attributesDictionary = @{@"Save Error" : saveError.localizedDescription};
-        [Answers logCustomEventWithName:@"BookViewController - Save Error" customAttributes:attributesDictionary];
-        
+    if (reservationBookedSuccessfully) {
+        [self.navigationController popToRootViewControllerAnimated:YES];
     } else {
-        NSLog(@"New reservation successfully saved to Core Data.");
-        NSDictionary *attributesDictionary = @{@"Hotel" : self.room.hotel.name};
-        [Answers logCustomEventWithName:@"Reservation booked" customAttributes:attributesDictionary];
+        NSLog(@"An error occurred when booking reservation; please check analytics logs.");
     }
-    
-    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end
